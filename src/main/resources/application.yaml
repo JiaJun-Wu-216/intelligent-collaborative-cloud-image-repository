@@ -1,0 +1,48 @@
+server:
+  # 启动端口
+  port: 8123
+  servlet:
+    # 访问前缀（localhost:8123 -> localhost:8123/api）
+    context-path: /api
+spring:
+  application:
+    name: intelligent-collaborative-cloud-image-repository
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:msql://localhost:3306/cloud_image_repository
+    username: root
+    password: 123456
+mybatis-plus:
+  configuration:
+    # 自动将数据库中的下划线命名字段映射到 Java 实体类的驼峰命名属性
+    map-underscore-to-camel-case: true
+    # 仅在开发环境打印日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      # 全局逻辑删除的实体字段名
+      logic-delete-field: is_delete
+      # 逻辑已删除值（默认为 1）
+      logic-delete-value: 1
+      # 逻辑未删除值（默认为 0）
+      logic-not-delete-value: 0
+# springdoc-openapi项目配置
+#springdoc:
+#  swagger-ui:
+#    path: /swagger-ui.html
+#    tags-sorter: alpha
+#    operations-sorter: alpha
+#  api-docs:
+#    path: /v3/api-docs
+#  group-configs:
+#    - group: '默认分组'
+#      paths-to-match: '/**'
+#      packages-to-scan: com.chipswu.intelligentcollaborativecloudimagerepository.controller
+# knife4j的增强配置
+#knife4j:
+#  # 启用增强配置
+#  enable: true
+#  # 设置列表
+#  setting:
+#    # 将语言设置为中文
+#    language: zh_cn
