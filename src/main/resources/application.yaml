@@ -1,0 +1,3 @@
+spring:
+  application:
+    name: intelligent-collaborative-cloud-image-repository
