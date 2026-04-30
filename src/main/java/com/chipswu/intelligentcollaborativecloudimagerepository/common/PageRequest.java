@@ -11,12 +11,12 @@ import lombok.Data;
 public class PageRequest {
 
     /**
-     * 当前页号
+     * 当前页码
      */
     private int current = 1;
 
     /**
-     * 页面大小
+     * 每页展示数量
      */
     private int pageSize = 10;
 

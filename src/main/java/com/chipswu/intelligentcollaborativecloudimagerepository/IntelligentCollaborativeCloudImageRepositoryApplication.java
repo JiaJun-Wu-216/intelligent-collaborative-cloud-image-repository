@@ -1,9 +1,11 @@
 package com.chipswu.intelligentcollaborativecloudimagerepository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.core.env.Environment;
 
 /*@OpenAPIDefinition(
         info = @Info(
@@ -20,12 +22,18 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
         )
 )*/
 @SpringBootApplication
+@Slf4j
 @MapperScan("com.chipswu.intelligentcollaborativecloudimagerepository.mapper")
 @EnableAspectJAutoProxy(exposeProxy = true) // 启用 AOP 代理
 public class IntelligentCollaborativeCloudImageRepositoryApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(IntelligentCollaborativeCloudImageRepositoryApplication.class, args);
+        SpringApplication app = new SpringApplication(IntelligentCollaborativeCloudImageRepositoryApplication.class);
+        Environment env = app.run(args).getEnvironment();
+        log.info("启动成功......");
+        log.info("地址：\thttp://127.0.0.1:{}{}",
+                env.getProperty("server.port"),
+                env.getProperty("server.servlet.context-path"));
     }
 
 }
