@@ -1,0 +1,8 @@
+aliyun:
+  oss:
+    endpoint: oss-cn-heyuan.aliyuncs.com
+    access-key-id: LTAI5t6Szk8QGeL9q3V4UsX5
+    access-key-secret: N5ty3RMbZqT0rKpsvelAHHCHtSjd0B
+    bucket-name: cloud-image-repository
+    region: cn-heyuan
+    public-endpoint: oss-cn-heyuan.aliyuncs.com
