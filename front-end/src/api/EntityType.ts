@@ -54,3 +54,352 @@ export interface UserQueryRequest extends PageRequest {
 export interface DeleteRequest {
   id: string
 }
+
+export interface PictureVO {
+  /**
+   * id
+   */
+  id: number
+
+  /**
+   * 图片 url
+   */
+  url: string
+
+  /**
+   * 图片名称
+   */
+  name: string
+
+  /**
+   * 简介
+   */
+  introduction: string
+
+  /**
+   * 标签
+   */
+  tags: string[]
+
+  /**
+   * 分类
+   */
+  category: string
+
+  /**
+   * 文件体积
+   */
+  picSize: number
+
+  /**
+   * 图片宽度
+   */
+  picWidth: number
+
+  /**
+   * 图片高度
+   */
+  picHeight: number
+
+  /**
+   * 图片比例
+   */
+  picScale: number
+
+  /**
+   * 图片格式
+   */
+  picFormat: string
+
+  /**
+   * 用户 id
+   */
+  userId: string
+
+  /**
+   * 创建时间
+   */
+  createTime: string
+
+  /**
+   * 编辑时间
+   */
+  editTime: string
+
+  /**
+   * 更新时间
+   */
+  updateTime: string
+
+  /**
+   * 创建用户信息
+   */
+  user: UserVO
+}
+
+/**
+ * 图片上传请求类
+ */
+export interface PictureUploadRequest {
+  /**
+   * 图片主键（用于修改）
+   */
+  id?: number
+
+  /**
+   * 图片地址
+   */
+  fileUrl?: string
+}
+
+/**
+ * 图片批量上传请求类
+ */
+export interface PictureUploadByBatchRequest {
+  /**
+   * 搜索词
+   */
+  searchText?: string
+
+  /**
+   * 抓取数量
+   */
+  count?: number
+
+  /**
+   * 图片名称前缀
+   */
+  namePrefix?: string
+}
+
+export interface PictureEditRequest {
+  /**
+   * id
+   */
+  id: number
+
+  /**
+   * 图片名称
+   */
+  name: string
+
+  /**
+   * 简介
+   */
+  introduction: string
+
+  /**
+   * 分类
+   */
+  category: string
+
+  /**
+   * 标签
+   */
+  tags: string[]
+}
+
+/**
+ * 图片标签分类列表视图
+ */
+export interface PictureTagCategory {
+  /**
+   * 标签列表
+   */
+  tagList: string[]
+
+  /**
+   * 分类列表
+   */
+  categoryList: string[]
+}
+
+/**
+ * 图片查询请求类
+ */
+export interface PictureQueryRequest extends PageRequest {
+  /**
+   * id
+   */
+  id?: number
+
+  /**
+   * 图片名称
+   */
+  name?: string
+
+  /**
+   * 简介
+   */
+  introduction?: string
+
+  /**
+   * 分类
+   */
+  category?: string
+
+  /**
+   * 标签
+   */
+  tags?: string[]
+
+  /**
+   * 文件体积
+   */
+  picSize?: number
+
+  /**
+   * 图片宽度
+   */
+  picWidth?: number
+
+  /**
+   * 图片高度
+   */
+  picHeight?: number
+
+  /**
+   * 图片比例
+   */
+  picScale?: number
+
+  /**
+   * 图片格式
+   */
+  picFormat?: string
+
+  /**
+   * 搜索词（同时搜名称、简介等）
+   */
+  searchText?: string
+
+  /**
+   * 用户 id
+   */
+  userId?: number
+
+  /**
+   * 状态：0-待审核; 1-通过; 2-拒绝
+   */
+  reviewStatus?: number
+
+  /**
+   * 审核信息
+   */
+  reviewMessage?: string
+
+  /**
+   * 审核人 id
+   */
+  reviewerId?: number
+
+  /**
+   * 审核时间
+   */
+  reviewTime?: string
+}
+
+/**
+ * 图片实体类
+ */
+export interface Picture {
+  /**
+   * id
+   */
+  id: number
+
+  /**
+   * 图片 url
+   */
+  url: string
+
+  /**
+   * 图片名称
+   */
+  name: string
+
+  /**
+   * 简介
+   */
+  introduction: string
+
+  /**
+   * 分类
+   */
+  category: string
+
+  /**
+   * 标签（JSON 数组）
+   */
+  tags: string
+
+  /**
+   * 图片体积
+   */
+  picSize: number
+
+  /**
+   * 图片宽度
+   */
+  picWidth: number
+
+  /**
+   * 图片高度
+   */
+  picHeight: number
+
+  /**
+   * 图片宽高比例
+   */
+  picScale: number
+
+  /**
+   * 图片格式
+   */
+  picFormat: string
+
+  /**
+   * 创建用户 id
+   */
+  userId: number
+
+  /**
+   * 创建时间
+   */
+  createTime: string
+
+  /**
+   * 编辑时间
+   */
+  editTime: string
+
+  /**
+   * 更新时间
+   */
+  updateTime: string
+
+  /**
+   * 是否删除
+   */
+  isDelete: number
+}
+
+/**
+ * 图片审核请求类
+ */
+export interface PictureReviewRequest {
+  /**
+   * 图片主键
+   */
+  id: number
+
+  /**
+   * 状态：0-待审核, 1-通过, 2-拒绝
+   */
+  reviewStatus: number
+
+  /**
+   * 审核信息
+   */
+  reviewMessage: string
+}
