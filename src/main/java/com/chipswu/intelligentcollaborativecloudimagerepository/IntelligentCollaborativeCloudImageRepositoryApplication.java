@@ -34,7 +34,6 @@ public class IntelligentCollaborativeCloudImageRepositoryApplication {
         log.info("地址：\thttp://127.0.0.1:{}{}",
                 env.getProperty("server.port"),
                 env.getProperty("server.servlet.context-path"));
-        log.info("");
     }
 
 }
