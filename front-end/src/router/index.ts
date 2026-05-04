@@ -20,33 +20,9 @@ const router = createRouter({
       component: () => import('@/pages/user/UserRegisterPage.vue'),
     },
     {
-      path: '/add-picture',
-      name: 'addPicture',
-      component: () => import('@/pages/AddPicturePage.vue'),
-    },
-    {
-      path: '/add-picture/batch',
-      name: 'addPictureBatch',
-      component: () => import('@/pages/AddPictureBatchPage.vue'),
-    },
-    {
-      path: '/picture/:id',
-      name: 'pictureDetail',
-      props: true,
-      component: () => import('@/pages/PictureDetailPage.vue'),
-    },
-    {
-      path: '/admin/user-manage',
+      path: '/admin/userManage',
       name: 'userManage',
       component: () => import('@/pages/admin/UserManagePage.vue'),
-      meta: {
-        access: ACCESS_ENUM.ADMIN,
-      },
-    },
-    {
-      path: '/admin/picture-manage',
-      name: 'pictureManage',
-      component: () => import('@/pages/admin/PictureManagePage.vue'),
       meta: {
         access: ACCESS_ENUM.ADMIN,
       },

@@ -241,24 +241,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String sortOrder = userQueryRequest.getSortOrder();
         LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ObjUtil.isNotNull(id), User::getId, id);
-        queryWrapper.eq(StrUtil.isNotBlank(userRole), User::getUserRole, userRole);
-        queryWrapper.like(StrUtil.isNotBlank(userAccount), User::getUserAccount, userAccount);
-        queryWrapper.like(StrUtil.isNotBlank(username), User::getUsername, username);
-        queryWrapper.like(StrUtil.isNotBlank(userProfile), User::getUserProfile, userProfile);
+        queryWrapper.eq(StrUtil.isNotBlank(userRole),User::getUserRole,userRole);
+        queryWrapper.like(StrUtil.isNotBlank(userAccount),User::getUserAccount,userAccount);
+        queryWrapper.like(StrUtil.isNotBlank(username),User::getUsername,username);
+        queryWrapper.like(StrUtil.isNotBlank(userProfile),User::getUserProfile,userProfile);
         // todo：指定排序条件
         return queryWrapper;
-    }
-
-    /**
-     * 当前用户是否为管理员
-     *
-     * @param user 用户信息
-     * @return 判断结果
-     * <code>true</code>：是管理员
-     * <code>false</code>：不是管理员
-     */
-    @Override
-    public boolean isAdmin(User user) {
-        return user != null && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole());
     }
 }

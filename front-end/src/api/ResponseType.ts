@@ -1,4 +1,4 @@
-import type {LoginUserVO, PictureTagCategory, PictureVO} from '@/api/EntityType.ts'
+import type {LoginUserVO} from '@/api/EntityType.ts'
 
 export interface ResponseLoginUserVO {
   code?: number
@@ -18,26 +18,8 @@ export interface ResponseBoolean {
   message?: string
 }
 
-export interface ResponseNumber {
-  code?: number
-  data?: number
-  message?: string
-}
-
 export interface ResponseAny {
   code?: number
   data?: any
   message?: string
-}
-
-export interface ResponsePictureVO {
-  code?: number
-  data?: PictureVO
-  message?: string
-}
-
-export interface ResponsePictureTagCategory {
-  code?: number
-  data?: PictureTagCategory
-  message?:string
 }
