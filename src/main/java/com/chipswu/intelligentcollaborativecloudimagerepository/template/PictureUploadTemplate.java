@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 图片上传模板
@@ -60,8 +61,13 @@ public abstract class PictureUploadTemplate {
             // 获取得到图片处理结果
             String objectName = (String) result.get("objectName");
             ImageInfo imageInfo = (ImageInfo) result.get("imageInfo");
+            String webpObjectName = (String) result.get("webpObjectName");
+            if (webpObjectName == null) {
+                return this.buildResult(originFilename, tempFile, objectName, objectName, imageInfo);
+            }
+            String thumbnailObjectName = (String) result.get("thumbnailObjectName");
+            return this.buildResult(originFilename, tempFile, webpObjectName, Objects.requireNonNullElse(thumbnailObjectName, webpObjectName), imageInfo);
             // 5. 封装返回结果
-            return this.buildResult(originFilename, tempFile, objectName, imageInfo);
         } catch (Exception e) {
             log.error("图片上传到对象存储失败", e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传失败");
@@ -116,6 +122,31 @@ public abstract class PictureUploadTemplate {
         uploadPictureResult.setPicFormat(imageInfo.getFormat());
         uploadPictureResult.setPicSize(FileUtil.size(tempFile));
         uploadPictureResult.setUrl(ossUtils.getUrl(uploadPath));
+        return uploadPictureResult;
+    }
+
+    /**
+     * 封装返回结果
+     *
+     * @param originFilename 文件原始名
+     * @param tempFile       临时文件
+     * @param uploadPath     上传路径
+     * @param imageInfo      图片信息
+     * @return 图片上传结果信息
+     */
+    private UploadPictureResult buildResult(String originFilename, File tempFile, String uploadPath, String thumbnailUploadPath, ImageInfo imageInfo) {
+        UploadPictureResult uploadPictureResult = new UploadPictureResult();
+        int picWidth = Integer.parseInt(imageInfo.getImageWidth());
+        int picHeight = Integer.parseInt(imageInfo.getImageHeight());
+        double picScale = NumberUtil.round(picWidth * 1.0 / picHeight, 2).doubleValue();
+        uploadPictureResult.setPicName(FileUtil.mainName(originFilename));
+        uploadPictureResult.setPicWidth(picWidth);
+        uploadPictureResult.setPicHeight(picHeight);
+        uploadPictureResult.setPicScale(picScale);
+        uploadPictureResult.setPicFormat(imageInfo.getFormat());
+        uploadPictureResult.setPicSize(FileUtil.size(tempFile));
+        uploadPictureResult.setUrl(ossUtils.getUrl(uploadPath));
+        uploadPictureResult.setThumbnailUrl(ossUtils.getUrl(thumbnailUploadPath));
         return uploadPictureResult;
     }
 

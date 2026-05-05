@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /*@OpenAPIDefinition(
         info = @Info(
@@ -23,6 +24,7 @@ import org.springframework.core.env.Environment;
 )*/
 @SpringBootApplication
 @Slf4j
+@EnableAsync
 @MapperScan("com.chipswu.intelligentcollaborativecloudimagerepository.mapper")
 @EnableAspectJAutoProxy(exposeProxy = true) // 启用 AOP 代理
 public class IntelligentCollaborativeCloudImageRepositoryApplication {

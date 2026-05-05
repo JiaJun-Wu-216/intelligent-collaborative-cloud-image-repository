@@ -1,5 +1,6 @@
 package com.chipswu.intelligentcollaborativecloudimagerepository.utils;
 
+import cn.hutool.core.io.FileUtil;
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSException;
@@ -15,7 +16,6 @@ import okhttp3.Response;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,50 +83,68 @@ public class OSSUtils {
      * @param file       文件信息
      * @return 图像信息
      */
-    public Map<String,Object> putPictureObject(String objectName, File file) {
-        Map<String,Object> result = new HashMap<>();
+    public Map<String, Object> putPictureObject(String objectName, File file) {
+        Map<String, Object> result = new HashMap<>();
         // 创建PutObjectRequest对象。
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectName, file);
         // 上传文件
         ossClient.putObject(putObjectRequest);
+        result.put("objectName", objectName);
         // 图片压缩（转换成 webp 格式）
         int lastDotIndex = objectName.lastIndexOf('.');
         if (lastDotIndex != -1) {
+            // 图片处理 - 转换 webp 格式
             // 截取从开头到最后一个 '.' 的部分，并拼接 ".webp"
-            String newObjectName = objectName.substring(0, lastDotIndex) + ".webp";
-            StringBuilder sbStyle = new StringBuilder();
-            Formatter styleFormatter = new Formatter(sbStyle);
+            String webpObjectName = objectName.substring(0, lastDotIndex) + ".webp";
             String styleType = "image/format,webp";
             // 将处理后的图片命名为example-resize.png并保存到当前Bucket。
-            styleFormatter.format("%s|sys/saveas,o_%s,b_%s", styleType,
+            String sbStyle = String.format("%s|sys/saveas,o_%s,b_%s", styleType,
                     // 填写Object完整路径。Object完整路径中不能包含Bucket名称。
-                    BinaryUtil.toBase64String(newObjectName.getBytes()),
+                    BinaryUtil.toBase64String(webpObjectName.getBytes()),
                     BinaryUtil.toBase64String(bucketName.getBytes()));
-            ProcessObjectRequest request = new ProcessObjectRequest(bucketName, objectName, sbStyle.toString());
+            ProcessObjectRequest request = new ProcessObjectRequest(bucketName, objectName, sbStyle);
             ossClient.processObject(request);
+            result.put("webpObjectName", webpObjectName);
+
+            // 图片处理 - 缩略图（仅对 > 20 KB 的图片生成缩略图）
+            if (file.length() > 20 * 1024) {
+                String thumbnailObjectName = objectName.substring(0, lastDotIndex) + "_thumbnail." + FileUtil.getSuffix(objectName);
+                styleType = String.format("image/resize,m_%s,w_%s,h_%s", "lfit", 256, 256);
+                // 将处理后的图片命名为example-resize.png并保存到当前Bucket。
+                sbStyle = String.format("%s|sys/saveas,o_%s,b_%s", styleType,
+                        // 填写Object完整路径。Object完整路径中不能包含Bucket名称。
+                        BinaryUtil.toBase64String(thumbnailObjectName.getBytes()),
+                        BinaryUtil.toBase64String(bucketName.getBytes()));
+                ProcessObjectRequest thumbnailRequest = new ProcessObjectRequest(bucketName, objectName, sbStyle);
+                ossClient.processObject(thumbnailRequest);
+                result.put("thumbnailObjectName", thumbnailObjectName);
+            } else {
+                result.put("thumbnailObjectName", null);
+            }
             // 对图片处理（获取基本信息也被视作为一种图片的处理）
-            String url = this.getUrl(newObjectName);
+            String url = this.getUrl(webpObjectName);
             ImageInfo imageInfo = this.getImageInfo(url);
-            result.put("objectName",newObjectName);
-            result.put("imageInfo",imageInfo);
+            result.put("imageInfo", imageInfo);
             return result;
+        } else {
+            result.put("webpObjectName", null);
         }
         // 对图片处理（获取基本信息也被视作为一种图片的处理）
         String url = this.getUrl(objectName);
         ImageInfo imageInfo = this.getImageInfo(url);
-        result.put("objectName",objectName);
-        result.put("imageInfo",imageInfo);
+        result.put("imageInfo", imageInfo);
         return result;
     }
 
     /**
      * 删除文件或目录
      *
-     * @param objectName 文件完整路径（存储路径【不包含 bucketName】 + 文件名称【带文件类型】）
+     * @param url 文件访问路径
      * @throws OSSException    服务端异常
      * @throws ClientException 客户端异常
      */
-    public void delete(String objectName) throws OSSException, ClientException {
+    public void delete(String url) throws OSSException, ClientException {
+        String objectName = ObjectStoreUtils.extractOSSObjectKey(url);
         ossClient.deleteObject(bucketName, objectName);
     }
 
