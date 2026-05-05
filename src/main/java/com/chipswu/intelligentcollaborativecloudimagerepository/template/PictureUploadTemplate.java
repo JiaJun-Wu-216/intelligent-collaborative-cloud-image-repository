@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * 图片上传模板
@@ -55,9 +56,12 @@ public abstract class PictureUploadTemplate {
             // 处理文件来源（本地或 URL）
             processFile(inputSource, tempFile);
             // 4. 上传图片到对象存储
-            ImageInfo imageInfo = ossUtils.putPictureObject(uploadPath, tempFile);
+            Map<String, Object> result = ossUtils.putPictureObject(uploadPath, tempFile);
+            // 获取得到图片处理结果
+            String objectName = (String) result.get("objectName");
+            ImageInfo imageInfo = (ImageInfo) result.get("imageInfo");
             // 5. 封装返回结果
-            return this.buildResult(originFilename, tempFile, uploadPath, imageInfo);
+            return this.buildResult(originFilename, tempFile, objectName, imageInfo);
         } catch (Exception e) {
             log.error("图片上传到对象存储失败", e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传失败");

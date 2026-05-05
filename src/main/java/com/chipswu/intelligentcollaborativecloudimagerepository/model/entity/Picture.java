@@ -119,6 +119,11 @@ public class Picture implements Serializable {
     @TableField(value = "`review_time`")
     private LocalDateTime reviewTime;
 
+    /**
+     * 缩略图 URL
+     */
+    @TableField(value = "`thumbnail_url`")
+    private String thumbnailUrl;
 
     /**
      * 创建时间

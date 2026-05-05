@@ -4,6 +4,10 @@ server:
   servlet:
     # 访问前缀（localhost:8123 -> localhost:8123/api）
     context-path: /api
+    session:
+      cookie:
+        # 设置 Cookie 过期时间为 30 天
+        max-age: 2592000
 spring:
   application:
     name: intelligent-collaborative-cloud-image-repository
@@ -14,6 +18,14 @@ spring:
     url: jdbc:mysql://localhost:3306/cloud_image_repository?serverTimezone=UTC&characterEncoding=utf8&useUnicode=true&useSSL=false
     username: root
     password: 123456
+  session:
+    redis:
+      # 存储地址
+      namespace: spring:session:picture
+      # 存储类型
+      repository-type: indexed
+      # 过期时间
+      cleanup-cron: 0 0 0 30 * ?
   servlet:
     multipart:
       # 开放更大的文件上传体积

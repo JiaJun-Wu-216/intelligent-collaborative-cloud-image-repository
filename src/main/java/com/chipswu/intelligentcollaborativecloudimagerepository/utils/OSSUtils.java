@@ -3,10 +3,8 @@ package com.chipswu.intelligentcollaborativecloudimagerepository.utils;
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSException;
-import com.aliyun.oss.model.GetObjectRequest;
-import com.aliyun.oss.model.OSSObject;
-import com.aliyun.oss.model.PutObjectRequest;
-import com.aliyun.oss.model.PutObjectResult;
+import com.aliyun.oss.common.utils.BinaryUtil;
+import com.aliyun.oss.model.*;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.dto.picture.ImageInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -17,6 +15,9 @@ import okhttp3.Response;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Formatter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * OSS 工具类
@@ -82,14 +83,40 @@ public class OSSUtils {
      * @param file       文件信息
      * @return 图像信息
      */
-    public ImageInfo putPictureObject(String objectName, File file) {
+    public Map<String,Object> putPictureObject(String objectName, File file) {
+        Map<String,Object> result = new HashMap<>();
         // 创建PutObjectRequest对象。
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectName, file);
         // 上传文件
         ossClient.putObject(putObjectRequest);
+        // 图片压缩（转换成 webp 格式）
+        int lastDotIndex = objectName.lastIndexOf('.');
+        if (lastDotIndex != -1) {
+            // 截取从开头到最后一个 '.' 的部分，并拼接 ".webp"
+            String newObjectName = objectName.substring(0, lastDotIndex) + ".webp";
+            StringBuilder sbStyle = new StringBuilder();
+            Formatter styleFormatter = new Formatter(sbStyle);
+            String styleType = "image/format,webp";
+            // 将处理后的图片命名为example-resize.png并保存到当前Bucket。
+            styleFormatter.format("%s|sys/saveas,o_%s,b_%s", styleType,
+                    // 填写Object完整路径。Object完整路径中不能包含Bucket名称。
+                    BinaryUtil.toBase64String(newObjectName.getBytes()),
+                    BinaryUtil.toBase64String(bucketName.getBytes()));
+            ProcessObjectRequest request = new ProcessObjectRequest(bucketName, objectName, sbStyle.toString());
+            ossClient.processObject(request);
+            // 对图片处理（获取基本信息也被视作为一种图片的处理）
+            String url = this.getUrl(newObjectName);
+            ImageInfo imageInfo = this.getImageInfo(url);
+            result.put("objectName",newObjectName);
+            result.put("imageInfo",imageInfo);
+            return result;
+        }
         // 对图片处理（获取基本信息也被视作为一种图片的处理）
         String url = this.getUrl(objectName);
-        return this.getImageInfo(url);
+        ImageInfo imageInfo = this.getImageInfo(url);
+        result.put("objectName",objectName);
+        result.put("imageInfo",imageInfo);
+        return result;
     }
 
     /**
