@@ -36,6 +36,22 @@ const router = createRouter({
       component: () => import('@/pages/PictureDetailPage.vue'),
     },
     {
+      path: '/add-space',
+      name: 'addSpace',
+      component: () => import('@/pages/AddSpacePage.vue'),
+    },
+    {
+      path: '/my-space',
+      name: 'mySpace',
+      component: () => import('@/pages/MySpacePage.vue'),
+    },
+    {
+      path: '/space/:id',
+      name: 'spaceDetail',
+      props: true,
+      component: () => import('@/pages/SpaceDetailPage.vue'),
+    },
+    {
       path: '/admin/user-manage',
       name: 'userManage',
       component: () => import('@/pages/admin/UserManagePage.vue'),
@@ -47,6 +63,14 @@ const router = createRouter({
       path: '/admin/picture-manage',
       name: 'pictureManage',
       component: () => import('@/pages/admin/PictureManagePage.vue'),
+      meta: {
+        access: ACCESS_ENUM.ADMIN,
+      },
+    },
+    {
+      path: '/admin/space-manage',
+      name: 'spaceManage',
+      component: () => import('@/pages/admin/SpaceManagePage.vue'),
       meta: {
         access: ACCESS_ENUM.ADMIN,
       },

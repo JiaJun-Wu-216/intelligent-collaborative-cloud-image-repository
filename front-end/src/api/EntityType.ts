@@ -1,18 +1,18 @@
 export interface LoginUserVO {
-  id: string
-  userAccount: string
-  username: string
-  userAvatar: string
-  userProfile: string
-  userRole: string
-  vipExpireTime: string
-  vipCode: string
-  vipNumber: string
-  shareCode: string
-  inviteUser: string
-  editTime: string
-  createTime: string
-  updateTime: string
+  id?: number
+  userAccount?: string
+  username?: string
+  userAvatar?: string
+  userProfile?: string
+  userRole?: string
+  vipExpireTime?: string
+  vipCode?: string
+  vipNumber?: string
+  shareCode?: string
+  inviteUser?: string
+  editTime?: string
+  createTime?: string
+  updateTime?: string
 }
 
 export interface UserVO {
@@ -37,10 +37,10 @@ export interface UserRegisterRequest {
 }
 
 export interface PageRequest {
-  current: number
-  pageSize: number
-  sortField: string
-  sortOrder: string
+  current?: number
+  pageSize?: number
+  sortField?: string
+  sortOrder?: string
 }
 
 export interface UserQueryRequest extends PageRequest {
@@ -60,6 +60,11 @@ export interface PictureVO {
    * id
    */
   id: number
+
+  /**
+   * 空间 ID
+   */
+  spaceId: number
 
   /**
    * 图片 url
@@ -150,6 +155,16 @@ export interface PictureUploadRequest {
    * 图片地址
    */
   fileUrl?: string
+
+  /**
+   * 图片名称
+   */
+  picName?: string
+
+  /**
+   * 空间主键
+   */
+  spaceId?: number
 }
 
 /**
@@ -297,6 +312,11 @@ export interface PictureQueryRequest extends PageRequest {
    * 审核时间
    */
   reviewTime?: string
+
+  /**
+   * 是否只查询 spaceId 为 null 的数据
+   */
+  nullSpaceId?:boolean
 }
 
 /**
@@ -402,4 +422,181 @@ export interface PictureReviewRequest {
    * 审核信息
    */
   reviewMessage: string
+}
+
+/**
+ * 空间编辑请求类
+ */
+export interface SpaceEditRequest {
+  /**
+   * 空间 id
+   */
+  id?: number
+
+  /**
+   * 空间名称
+   */
+  spaceName?: string
+}
+
+/**
+ * 空间视图包装类
+ */
+export interface SpaceVO {
+  /**
+   * id
+   */
+  id?: number
+
+  /**
+   * 空间名称
+   */
+  spaceName?: string
+
+  /**
+   * 空间级别：0-普通版 1-专业版 2-旗舰版
+   */
+  spaceLevel?: number
+
+  /**
+   * 空间图片的最大总大小
+   */
+  maxSize?: number
+
+  /**
+   * 空间图片的最大数量
+   */
+  maxCount?: number
+
+  /**
+   * 当前空间下图片的总大小
+   */
+  totalSize?: number
+
+  /**
+   * 当前空间下的图片数量
+   */
+  totalCount?: number
+
+  /**
+   * 创建用户 id
+   */
+  userId?: number
+
+  /**
+   * 空间 id
+   */
+  spaceId?: number
+
+  /**
+   * 创建时间
+   */
+  createTime?: string
+
+  /**
+   * 编辑时间
+   */
+  editTime?: string
+
+  /**
+   * 更新时间
+   */
+  updateTime?: string
+
+  /**
+   * 创建用户信息
+   */
+  user?: UserVO
+}
+
+/**
+ * 空间查询请求类
+ */
+export interface SpaceQueryRequest extends PageRequest {
+  /**
+   * id
+   */
+  id?: number
+
+  /**
+   * 用户 id
+   */
+  userId?: number
+
+  /**
+   * 空间级别：0-普通版 1-专业版 2-旗舰版
+   */
+  spaceLevel?: number
+
+  /**
+   * 空间名称
+   */
+  spaceName?: string
+}
+
+/**
+ * 空间创建请求类
+ */
+export interface SpaceAddRequest {
+  /**
+   * 空间名称
+   */
+  spaceName?: string
+
+  /**
+   * 空间级别：0-普通版 1-专业版 2-旗舰版
+   */
+  spaceLevel?: number
+}
+
+/**
+ * 空间级别
+ */
+export interface SpaceLevel {
+  /**
+   * 值
+   */
+  value?: number
+
+  /**
+   * 描述
+   */
+  text?: string
+
+  /**
+   * 最大数量
+   */
+  maxCount?: number
+
+  /**
+   * 最大容量
+   */
+  maxSize?: number
+}
+
+export interface SpaceUpdateRequest {
+  /**
+   * id
+   */
+  id?: number
+
+  /**
+   * 空间名称
+   */
+  spaceName?: string
+
+  /**
+   * 空间级别：0-普通版 1-专业版 2-旗舰版
+   */
+  spaceLevel?: number
+
+  /**
+   * 空间图片的最大总大小
+   */
+  maxSize?: number
+
+  /**
+   * 空间图片的最大数量
+   */
+  maxCount?: number
 }

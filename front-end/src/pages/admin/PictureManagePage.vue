@@ -161,6 +161,11 @@ const columns = [
     width: 80,
   },
   {
+    title: '空间 ID',
+    dataIndex: 'spaceId',
+    width: 80,
+  },
+  {
     title: '审核信息',
     dataIndex: 'reviewMessage',
   },
@@ -203,6 +208,7 @@ const pagination = computed(() => {
 const fetchData = async () => {
   const response = await listPictureByPage({
     ...searchParams,
+    nullSpaceId: true,
   })
   if (response.code === 0 && response.data) {
     dataList.value = response.data.records ?? []

@@ -3,10 +3,7 @@ package com.chipswu.intelligentcollaborativecloudimagerepository.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.chipswu.intelligentcollaborativecloudimagerepository.model.dto.picture.PictureQueryRequest;
-import com.chipswu.intelligentcollaborativecloudimagerepository.model.dto.picture.PictureReviewRequest;
-import com.chipswu.intelligentcollaborativecloudimagerepository.model.dto.picture.PictureUploadByBatchRequest;
-import com.chipswu.intelligentcollaborativecloudimagerepository.model.dto.picture.PictureUploadRequest;
+import com.chipswu.intelligentcollaborativecloudimagerepository.model.dto.picture.*;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.entity.Picture;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.entity.User;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.vo.PictureVO;
@@ -89,9 +86,33 @@ public interface PictureService extends IService<Picture> {
                                  User loginUser);
 
     /**
-     * 清楚图片文件
+     * 清除图片文件
      *
      * @param oldPicture 旧图片文件
      */
     void clearPictureFile(Picture oldPicture);
+
+    /**
+     * 校验空间图片的权限
+     *
+     * @param loginsUser 当前登录用户信息
+     * @param picture    图片信息
+     */
+    void checkPictureAuth(User loginsUser, Picture picture);
+
+    /**
+     * 删除图片
+     *
+     * @param pictureId 图片主键
+     * @param loginUser 当前登录用户
+     */
+    void deletePicture(long pictureId, User loginUser);
+
+    /**
+     * 编辑图片
+     *
+     * @param pictureEditRequest 图片编辑请求信息
+     * @param loginUser          当前登录用户
+     */
+    void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
 }

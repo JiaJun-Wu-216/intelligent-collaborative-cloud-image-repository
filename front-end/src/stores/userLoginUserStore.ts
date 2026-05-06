@@ -3,8 +3,8 @@ import {ref} from 'vue'
 import type {LoginUserVO} from '@/api/EntityType.ts'
 import {getLoginUser} from '@/api/UserAPI.ts'
 
-export const userLoginUserStore = defineStore('loginUser', () => {
-  const loginUser = ref<LoginUserVO>()
+export const userLoginUserStore = defineStore('userLoginUserStore', () => {
+  const loginUser = ref<LoginUserVO>({})
 
   /**
    * 设置登陆用户
@@ -24,23 +24,8 @@ export const userLoginUserStore = defineStore('loginUser', () => {
   /**
    * 用户退出登录
    */
-  function LoginUserLogout(){
-    loginUser.value = {
-      username: '',
-      createTime: '',
-      editTime: '',
-      id: '',
-      inviteUser: '',
-      shareCode: '',
-      updateTime: '',
-      userAccount: '',
-      userAvatar: '',
-      userProfile: '',
-      userRole: '',
-      vipCode: '',
-      vipExpireTime: '',
-      vipNumber: '',
-    }
+  function LoginUserLogout() {
+    loginUser.value = {}
   }
 
   return { loginUser, setLoginUser, fetchLoginUser, LoginUserLogout }

@@ -16,6 +16,7 @@
         <result column="pic_scale" jdbcType="DOUBLE" property="picScale"/>
         <result column="pic_format" jdbcType="VARCHAR" property="picFormat"/>
         <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="space_id" jdbcType="BIGINT" property="spaceId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="edit_time" jdbcType="TIMESTAMP" property="editTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
@@ -40,6 +41,7 @@
         `pic_scale`,
         `pic_format`,
         `user_id`,
+        `space_id`,
         `create_time`,
         `edit_time`,
         `update_time`,

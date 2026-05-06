@@ -1,4 +1,10 @@
-import type {LoginUserVO, PictureTagCategory, PictureVO} from '@/api/EntityType.ts'
+import type {
+  LoginUserVO,
+  PictureTagCategory,
+  PictureVO,
+  SpaceLevel,
+  SpaceVO,
+} from '@/api/EntityType.ts'
 
 export interface ResponseLoginUserVO {
   code?: number
@@ -39,5 +45,17 @@ export interface ResponsePictureVO {
 export interface ResponsePictureTagCategory {
   code?: number
   data?: PictureTagCategory
-  message?:string
+  message?: string
+}
+
+export interface ResponseSpaceVO {
+  code?: number
+  data?: SpaceVO
+  message?: string
+}
+
+export interface ResponseSpaceLevelList {
+  code?: number
+  data?: SpaceLevel[]
+  message?: string
 }
