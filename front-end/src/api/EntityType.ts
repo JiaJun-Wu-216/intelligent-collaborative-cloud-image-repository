@@ -316,7 +316,17 @@ export interface PictureQueryRequest extends PageRequest {
   /**
    * 是否只查询 spaceId 为 null 的数据
    */
-  nullSpaceId?:boolean
+  nullSpaceId?: boolean
+
+  /**
+   * 开始编辑时间
+   */
+  startEditTime?: string
+
+  /**
+   * 结束编辑时间
+   */
+  endEditTime?: string
 }
 
 /**

@@ -18,8 +18,15 @@
         </a-tooltip>
       </a-space>
     </a-flex>
+    <!-- 搜索表单 -->
+    <picture-search-form :onSearch="onSearch" style="margin-bottom: 16px" />
     <!-- 图片列表 -->
-    <picture-list :data-list="dataList" :loading="loading" :showOption="true" :onReload="fetchPictureVOListData"/>
+    <picture-list
+      :data-list="dataList"
+      :loading="loading"
+      :showOption="true"
+      :onReload="fetchPictureVOListData"
+    />
     <!-- 分页 -->
     <a-pagination
       style="text-align: center"
@@ -32,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, reactive, ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import type {PictureQueryRequest, PictureVO, SpaceVO} from '@/api/EntityType.ts'
 import {message} from 'ant-design-vue'
 import {getSpaceVOById} from '@/api/SpaceAPI.ts'
@@ -40,6 +47,7 @@ import {useRouter} from 'vue-router'
 import {listPictureVOByPage} from '@/api/PictureAPI.ts'
 import {formatSize} from '@/utils'
 import PictureList from '@/components/PictureList.vue'
+import PictureSearchForm from '@/components/PictureSearchForm.vue'
 
 const props = defineProps<{
   id: string | number
@@ -67,7 +75,7 @@ const total = ref(0)
 const loading = ref(true)
 
 // 搜索条件
-const searchParams = reactive<PictureQueryRequest>({
+const searchParams = ref<PictureQueryRequest>({
   current: 1,
   pageSize: 12,
   sortField: 'create_time',
@@ -77,8 +85,8 @@ const searchParams = reactive<PictureQueryRequest>({
 // 分页参数
 const onPageChange = (page: number, pageSize: number) => {
   // 切换页号时，会修改搜索参数并获取数据
-  searchParams.current = page
-  searchParams.pageSize = pageSize
+  searchParams.value.current = page
+  searchParams.value.pageSize = pageSize
   fetchPictureVOListData()
 }
 
@@ -88,7 +96,7 @@ const fetchPictureVOListData = async () => {
   // 转换搜索参数
   const params = {
     spaceId: props.id,
-    ...searchParams,
+    ...searchParams.value,
   }
   const response = await listPictureVOByPage(params)
   if (response.data) {
@@ -98,6 +106,19 @@ const fetchPictureVOListData = async () => {
     message.error('获取数据失败，' + response.message)
   }
   loading.value = false
+}
+
+/**
+ * 搜索
+ * @param newSearchParams
+ */
+const onSearch = (newSearchParams: PictureQueryRequest) => {
+  searchParams.value = {
+    ...searchParams.value,
+    ...newSearchParams,
+    current: 1,
+  }
+  fetchPictureVOListData()
 }
 
 onMounted(() => {
