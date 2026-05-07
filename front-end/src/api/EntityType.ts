@@ -59,87 +59,92 @@ export interface PictureVO {
   /**
    * id
    */
-  id: number
+  id?: number
 
   /**
    * 空间 ID
    */
-  spaceId: number
+  spaceId?: number
 
   /**
    * 图片 url
    */
-  url: string
+  url?: string
 
   /**
    * 图片名称
    */
-  name: string
+  name?: string
 
   /**
    * 简介
    */
-  introduction: string
+  introduction?: string
 
   /**
    * 标签
    */
-  tags: string[]
+  tags?: string[]
 
   /**
    * 分类
    */
-  category: string
+  category?: string
 
   /**
    * 文件体积
    */
-  picSize: number
+  picSize?: number
 
   /**
    * 图片宽度
    */
-  picWidth: number
+  picWidth?: number
 
   /**
    * 图片高度
    */
-  picHeight: number
+  picHeight?: number
 
   /**
    * 图片比例
    */
-  picScale: number
+  picScale?: number
 
   /**
    * 图片格式
    */
-  picFormat: string
+  picFormat?: string
 
   /**
    * 用户 id
    */
-  userId: string
+  userId?: string
 
   /**
    * 创建时间
    */
-  createTime: string
+  createTime?: string
 
   /**
    * 编辑时间
    */
-  editTime: string
+  editTime?: string
 
   /**
    * 更新时间
    */
-  updateTime: string
+  updateTime?: string
 
   /**
    * 创建用户信息
    */
-  user: UserVO
+  user?: UserVO
+
+  /**
+   * 缩略图
+   */
+  thumbnailUrl?: string
 }
 
 /**
@@ -609,4 +614,29 @@ export interface SpaceUpdateRequest {
    * 空间图片的最大数量
    */
   maxCount?: number
+}
+
+/**
+ * 图片搜索结果类
+ */
+export interface ImageSearchResult {
+  /**
+   * 缩略图地址
+   */
+  thumbUrl?: string
+
+  /**
+   * 来源地址
+   */
+  fromUrl?: string
+}
+
+/**
+ * 以图搜图请求类
+ */
+export interface SearchPictureByPictureRequest {
+  /**
+   * 图片 id
+   */
+  pictureId: number
 }

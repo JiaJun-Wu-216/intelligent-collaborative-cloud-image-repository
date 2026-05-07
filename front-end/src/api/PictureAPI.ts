@@ -2,6 +2,7 @@ import {request} from '@/request'
 import type {
   ResponseAny,
   ResponseBoolean,
+  ResponseImageSearchResult,
   ResponseNumber,
   ResponsePictureTagCategory,
   ResponsePictureVO,
@@ -13,6 +14,7 @@ import type {
   PictureReviewRequest,
   PictureUploadByBatchRequest,
   PictureUploadRequest,
+  SearchPictureByPictureRequest,
 } from '@/api/EntityType.ts'
 
 /**
@@ -114,4 +116,14 @@ export const doPictureReview = (
   pictureReviewRequest: PictureReviewRequest,
 ): Promise<ResponseBoolean> => {
   return request.post('/picture/review', pictureReviewRequest)
+}
+
+/**
+ * 以图搜图
+ * @param searchPictureByPictureRequest 以图搜图查找请求
+ */
+export const searchPictureByPicture = (
+  searchPictureByPictureRequest: SearchPictureByPictureRequest,
+): Promise<ResponseImageSearchResult> => {
+  return request.post('/picture/search/picture', searchPictureByPictureRequest)
 }

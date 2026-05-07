@@ -1,4 +1,5 @@
 import type {
+  ImageSearchResult,
   LoginUserVO,
   PictureTagCategory,
   PictureVO,
@@ -57,5 +58,11 @@ export interface ResponseSpaceVO {
 export interface ResponseSpaceLevelList {
   code?: number
   data?: SpaceLevel[]
+  message?: string
+}
+
+export interface ResponseImageSearchResult {
+  code?: number
+  data?: ImageSearchResult[]
   message?: string
 }

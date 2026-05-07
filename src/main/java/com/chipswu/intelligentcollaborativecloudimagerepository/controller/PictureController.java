@@ -5,6 +5,8 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chipswu.intelligentcollaborativecloudimagerepository.annotation.AuthCheck;
+import com.chipswu.intelligentcollaborativecloudimagerepository.api.imagesearch.ImageSearchApiFacade;
+import com.chipswu.intelligentcollaborativecloudimagerepository.api.imagesearch.model.ImageSearchResult;
 import com.chipswu.intelligentcollaborativecloudimagerepository.common.BaseResponse;
 import com.chipswu.intelligentcollaborativecloudimagerepository.common.DeleteRequest;
 import com.chipswu.intelligentcollaborativecloudimagerepository.common.ResultUtils;
@@ -377,5 +379,24 @@ public class PictureController {
         User loginUser = userService.getLoginUser(request);
         pictureService.doPictureReview(pictureReviewRequest, loginUser);
         return ResultUtils.success(true);
+    }
+
+    /**
+     * 以图搜图
+     *
+     * @param searchPictureByPictureRequest 以图搜图查找请求
+     * @param request                       当前请求信息
+     * @return 搜寻到的图片列表
+     */
+    @PostMapping("/search/picture")
+    public BaseResponse<List<ImageSearchResult>> searchPictureByPicture(@RequestBody SearchPictureByPictureRequest searchPictureByPictureRequest,
+                                                                        HttpServletRequest request) {
+        ThrowUtils.throwIf(searchPictureByPictureRequest == null, ErrorCode.PARAMS_ERROR);
+        Long pictureId = searchPictureByPictureRequest.getPictureId();
+        ThrowUtils.throwIf(pictureId == null || pictureId <= 0, ErrorCode.PARAMS_ERROR);
+        Picture picture = pictureService.getById(pictureId);
+        ThrowUtils.throwIf(picture == null, ErrorCode.NOT_FOUND_ERROR);
+        List<ImageSearchResult> imageSearchResults = ImageSearchApiFacade.searchImage(picture.getUrl());
+        return ResultUtils.success(imageSearchResults);
     }
 }

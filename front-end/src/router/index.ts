@@ -52,6 +52,11 @@ const router = createRouter({
       component: () => import('@/pages/SpaceDetailPage.vue'),
     },
     {
+      path: '/search-picture',
+      name: 'searchPicture',
+      component: () => import('@/pages/SearchPicturePage.vue'),
+    },
+    {
       path: '/admin/user-manage',
       name: 'userManage',
       component: () => import('@/pages/admin/UserManagePage.vue'),
