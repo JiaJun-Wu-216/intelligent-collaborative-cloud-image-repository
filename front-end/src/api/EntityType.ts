@@ -149,7 +149,7 @@ export interface PictureVO {
   /**
    * 主色调
    */
-  picColor?:string
+  picColor?: string
 }
 
 /**
@@ -659,4 +659,34 @@ export interface SearchPictureByColorRequest {
    * 空间 id
    */
   spaceId?: number
+}
+
+/**
+ * 批量修改图片信息请求类
+ */
+export interface PictureEditByBatchRequest {
+  /**
+   * 图片 id 列表
+   */
+  pictureIdList?: number[]
+
+  /**
+   * 空间 id
+   */
+  spaceId?: number
+
+  /**
+   * 分类
+   */
+  category?: string
+
+  /**
+   * 标签
+   */
+  tags?: string[]
+
+  /**
+   * 命名规则
+   */
+  nameRule?: string
 }

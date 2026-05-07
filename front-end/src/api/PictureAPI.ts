@@ -10,6 +10,7 @@ import type {
 } from '@/api/ResponseType.ts'
 import type {
   DeleteRequest,
+  PictureEditByBatchRequest,
   PictureEditRequest,
   PictureQueryRequest,
   PictureReviewRequest,
@@ -138,4 +139,14 @@ export const searchPictureByColor = (
   searchPictureByColorRequest: SearchPictureByColorRequest,
 ): Promise<ResponsePictureVOList> => {
   return request.post('/picture/search/color', searchPictureByColorRequest)
+}
+
+/**
+ * 批量编辑图片
+ * @param pictureEditByBatchRequest 批量编辑图片请求信息
+ */
+export const editPictureByBatch = (
+  pictureEditByBatchRequest: PictureEditByBatchRequest,
+): Promise<ResponseBoolean> => {
+  return request.post('/picture/edit/batch', pictureEditByBatchRequest)
 }
