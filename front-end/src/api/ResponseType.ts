@@ -43,6 +43,12 @@ export interface ResponsePictureVO {
   message?: string
 }
 
+export interface ResponsePictureVOList {
+  code?: number
+  data?: PictureVO[]
+  message?: string
+}
+
 export interface ResponsePictureTagCategory {
   code?: number
   data?: PictureTagCategory

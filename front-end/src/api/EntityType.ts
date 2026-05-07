@@ -145,6 +145,11 @@ export interface PictureVO {
    * 缩略图
    */
   thumbnailUrl?: string
+
+  /**
+   * 主色调
+   */
+  picColor?:string
 }
 
 /**
@@ -639,4 +644,19 @@ export interface SearchPictureByPictureRequest {
    * 图片 id
    */
   pictureId: number
+}
+
+/**
+ * 根据图片颜色搜索请求类
+ */
+export interface SearchPictureByColorRequest {
+  /**
+   * 图片主色调
+   */
+  picColor?: string
+
+  /**
+   * 空间 id
+   */
+  spaceId?: number
 }

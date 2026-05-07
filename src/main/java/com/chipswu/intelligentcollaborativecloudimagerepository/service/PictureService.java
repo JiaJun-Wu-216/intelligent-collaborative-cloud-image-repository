@@ -9,6 +9,8 @@ import com.chipswu.intelligentcollaborativecloudimagerepository.model.entity.Use
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.vo.PictureVO;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.List;
+
 /**
  * 图片相关应用层接口
  *
@@ -115,4 +117,14 @@ public interface PictureService extends IService<Picture> {
      * @param loginUser          当前登录用户
      */
     void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
+
+    /**
+     * 根据图片颜色搜索图片
+     *
+     * @param spaceId   空间 ID
+     * @param picColor  图片颜色
+     * @param loginUser 当前登录用户信息
+     * @return  搜寻到的图片列表
+     */
+    List<PictureVO> searchPictureByColor(Long spaceId, String picColor, User loginUser);
 }

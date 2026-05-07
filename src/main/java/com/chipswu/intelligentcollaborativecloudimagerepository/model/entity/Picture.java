@@ -155,4 +155,10 @@ public class Picture implements Serializable {
     @TableLogic
     @TableField(value = "`is_delete`")
     private Integer isDelete;
+
+    /**
+     * 图片主色调
+     */
+    @TableField(value = "`pic_color`")
+    private String picColor;
 }

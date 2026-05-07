@@ -30,32 +30,32 @@
               </template>
             </a-card-meta>
             <template #actions v-if="showOption">
-              <a-space @click="(e: any) => doSearch(e, picture)">
-                <SearchOutlined />
-                搜索
-              </a-space>
-              <a-space @click="(e: any) => doEdit(e, picture)">
-                <EditOutlined />
-                编辑
-              </a-space>
-              <a-space @click="(e: any) => doDelete(e, picture)">
-                <DeleteOutlined />
-                删除
-              </a-space>
+              <ShareAltOutlined @click="(e: any) => doShare(e, picture)" />
+              <SearchOutlined @click="(e: any) => doSearch(e, picture)" />
+              <EditOutlined @click="(e: any) => doEdit(e, picture)" />
+              <DeleteOutlined @click="(e: any) => doDelete(e, picture)" />
             </template>
           </a-card>
         </a-list-item>
       </template>
     </a-list>
+    <ShareModal ref="shareModalRef" :link="shareLink" />
   </div>
 </template>
 
 <script setup lang="ts">
 import type {PictureVO} from '@/api/EntityType.ts'
-import {DeleteOutlined, EditOutlined, SearchOutlined} from '@ant-design/icons-vue'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+  ShareAltOutlined,
+} from '@ant-design/icons-vue'
 import {useRouter} from 'vue-router'
 import {deletePicture} from '@/api/PictureAPI.ts'
 import {message} from 'ant-design-vue'
+import ShareModal from '@/components/ShareModal.vue'
+import {ref} from 'vue'
 
 interface Props {
   dataList?: PictureVO[]
@@ -116,6 +116,19 @@ const doDelete = async (e: any, picture: PictureVO) => {
     props.onReload?.()
   } else {
     message.error('删除失败')
+  }
+}
+
+// 分享
+const shareModalRef = ref()
+// 分享连接
+const shareLink = ref<string>()
+const doShare = (e: any, picture: PictureVO) => {
+  // 阻止冒泡
+  e.stopPropagation()
+  shareLink.value = `${window.location.protocol}//${window.location.host}/picture/${picture.id}`
+  if (shareModalRef.value) {
+    shareModalRef.value.openModal()
   }
 }
 </script>

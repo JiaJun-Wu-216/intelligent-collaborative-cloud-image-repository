@@ -26,6 +26,7 @@ import com.chipswu.intelligentcollaborativecloudimagerepository.service.UserServ
 import com.chipswu.intelligentcollaborativecloudimagerepository.template.FilePictureUpload;
 import com.chipswu.intelligentcollaborativecloudimagerepository.template.PictureUploadTemplate;
 import com.chipswu.intelligentcollaborativecloudimagerepository.template.UrlPictureUpload;
+import com.chipswu.intelligentcollaborativecloudimagerepository.utils.ColorSimilarUtils;
 import com.chipswu.intelligentcollaborativecloudimagerepository.utils.OSSUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,8 +40,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.awt.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -157,6 +160,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         picture.setPicFormat(uploadPictureResult.getPicFormat());
         picture.setUserId(loginUser.getId());
         picture.setThumbnailUrl(uploadPictureResult.getThumbnailUrl());
+        picture.setPicColor(uploadPictureResult.getPicColor());
         // 补充审核参数
         this.fillReviewParams(picture, loginUser);
         // 操作数据库
@@ -244,9 +248,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         queryWrapper.eq(ObjUtil.isNotEmpty(reviewerId), "review_id", reviewerId);
         queryWrapper.like(ObjUtil.isNotEmpty(reviewMessage), "review_message", reviewMessage);
         // >= startEditTime
-        queryWrapper.ge(ObjUtil.isNotEmpty(startEditTime),"edit_time",startEditTime);
+        queryWrapper.ge(ObjUtil.isNotEmpty(startEditTime), "edit_time", startEditTime);
         // < endEditTime
-        queryWrapper.lt(ObjUtil.isNotEmpty(endEditTime),"edit_time",endEditTime);
+        queryWrapper.lt(ObjUtil.isNotEmpty(endEditTime), "edit_time", endEditTime);
         // JSON 数组查询
         if (CollUtil.isNotEmpty(tags)) {
             for (String tag : tags) {
@@ -559,5 +563,55 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         // 操作数据库
         boolean result = this.updateById(picture);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+    }
+
+    /**
+     * 根据图片颜色搜索图片
+     *
+     * @param spaceId   空间 ID
+     * @param picColor  图片颜色
+     * @param loginUser 当前登录用户信息
+     * @return 搜寻到的图片列表
+     */
+    @Override
+    public List<PictureVO> searchPictureByColor(Long spaceId, String picColor, User loginUser) {
+        // 1.校验参数
+        ThrowUtils.throwIf(spaceId == null || StrUtil.isBlank(picColor), ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(loginUser == null, ErrorCode.NO_AUTH_ERROR);
+        // 2.检验空间权限
+        Space space = spaceService.getById(spaceId);
+        ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR, "空间不存在");
+        if (!space.getUserId().equals(loginUser.getId())) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "没有空间访问权限");
+        }
+        // 3.查询该空间下的所有图片（必须要有主色调）
+        List<Picture> pictureList = this.lambdaQuery()
+                .eq(Picture::getSpaceId, spaceId)
+                .isNotNull(Picture::getPicColor)
+                .list();
+        // 如果没有符合条件的图片，直接返回空列表
+        if (CollUtil.isEmpty(pictureList)) {
+            return List.of();
+        }
+        // 将颜色字符串转换为 Color 对象
+        Color targetColor = Color.decode(picColor);
+        // 4.计算相似度并排序
+        List<Picture> sortedPictureList = pictureList.stream()
+                .sorted(Comparator.comparingDouble(picture -> {
+                    String hexColor = picture.getPicColor();
+                    // 没有主色调的图片会默认排序到最后
+                    if (StrUtil.isBlank(hexColor)) {
+                        return Double.MAX_VALUE;
+                    }
+                    Color pictureColor = Color.decode(hexColor);
+                    // 计算相似度（值越大越相似，当前排序是以从小到大进行排序），返回值需要取反
+                    return -ColorSimilarUtils.calculateSimilarity(targetColor, pictureColor);
+                }))
+                // 取前 12 个
+                .limit(12).toList();
+        // 5.返回结果
+        return sortedPictureList.stream()
+                .map(PictureVO::objToVo)
+                .toList();
     }
 }

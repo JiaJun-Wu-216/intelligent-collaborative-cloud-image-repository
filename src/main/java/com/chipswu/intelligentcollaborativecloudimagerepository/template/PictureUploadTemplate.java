@@ -122,6 +122,7 @@ public abstract class PictureUploadTemplate {
         uploadPictureResult.setPicFormat(imageInfo.getFormat());
         uploadPictureResult.setPicSize(FileUtil.size(tempFile));
         uploadPictureResult.setUrl(ossUtils.getUrl(uploadPath));
+        uploadPictureResult.setPicColor(ossUtils.getImageMainColor(uploadPath));
         return uploadPictureResult;
     }
 
@@ -147,6 +148,7 @@ public abstract class PictureUploadTemplate {
         uploadPictureResult.setPicSize(FileUtil.size(tempFile));
         uploadPictureResult.setUrl(ossUtils.getUrl(uploadPath));
         uploadPictureResult.setThumbnailUrl(ossUtils.getUrl(thumbnailUploadPath));
+        uploadPictureResult.setPicColor(ossUtils.getImageMainColor(uploadPath));
         return uploadPictureResult;
     }
 

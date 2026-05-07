@@ -6,6 +6,7 @@ import type {
   ResponseNumber,
   ResponsePictureTagCategory,
   ResponsePictureVO,
+  ResponsePictureVOList,
 } from '@/api/ResponseType.ts'
 import type {
   DeleteRequest,
@@ -14,6 +15,7 @@ import type {
   PictureReviewRequest,
   PictureUploadByBatchRequest,
   PictureUploadRequest,
+  SearchPictureByColorRequest,
   SearchPictureByPictureRequest,
 } from '@/api/EntityType.ts'
 
@@ -126,4 +128,14 @@ export const searchPictureByPicture = (
   searchPictureByPictureRequest: SearchPictureByPictureRequest,
 ): Promise<ResponseImageSearchResult> => {
   return request.post('/picture/search/picture', searchPictureByPictureRequest)
+}
+
+/**
+ * 根据图片颜色搜索图片
+ * @param searchPictureByColorRequest 根据颜色查找图片请求类
+ */
+export const searchPictureByColor = (
+  searchPictureByColorRequest: SearchPictureByColorRequest,
+): Promise<ResponsePictureVOList> => {
+  return request.post('/picture/search/color', searchPictureByColorRequest)
 }

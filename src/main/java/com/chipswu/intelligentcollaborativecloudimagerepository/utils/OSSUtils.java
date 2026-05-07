@@ -1,6 +1,8 @@
 package com.chipswu.intelligentcollaborativecloudimagerepository.utils;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.TypeReference;
+import cn.hutool.json.JSONUtil;
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSException;
@@ -13,9 +15,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -192,5 +196,37 @@ public class OSSUtils {
             throw new RuntimeException(e);
         }
         return null;
+    }
+
+    /**
+     * 获取公有读图片的主色调
+     *
+     * @param objectName 图片的存储路径
+     * @return 图片主色调信息
+     */
+    public String getImageMainColor(String objectName) {
+        if (objectName == null || objectName.isEmpty()) {
+            throw new IllegalArgumentException("Public image URL must not be null or empty");
+        }
+
+        GetObjectRequest objectRequest = new GetObjectRequest(bucketName, objectName);
+        objectRequest.setProcess("image/average-hue");
+        // 使用getObject方法，并通过process参数传入处理指令。
+        OSSObject ossObject = ossClient.getObject(objectRequest);
+        // 读取并打印信息。
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        try {
+            while ((bytesRead = ossObject.getObjectContent().read(buffer)) != -1) {
+                baos.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        String resultJSON = baos.toString(StandardCharsets.UTF_8);
+        Map<String, String> resultMap = JSONUtil.toBean(resultJSON, new TypeReference<>() {
+        }, false);
+        return ColorTransformUtils.getStandardColor(resultMap.get("RGB"));
     }
 }

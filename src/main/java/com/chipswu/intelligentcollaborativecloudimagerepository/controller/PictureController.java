@@ -399,4 +399,21 @@ public class PictureController {
         List<ImageSearchResult> imageSearchResults = ImageSearchApiFacade.searchImage(picture.getUrl());
         return ResultUtils.success(imageSearchResults);
     }
+
+    /**
+     * 根据图片颜色搜索图片
+     *
+     * @param searchPictureByColorRequest 根据颜色查找图片请求类
+     * @param request                     当前请求信息
+     * @return 搜寻到的图片列表
+     */
+    @PostMapping("/search/color")
+    public BaseResponse<List<PictureVO>> searchPictureByColor(@RequestBody SearchPictureByColorRequest searchPictureByColorRequest,
+                                                              HttpServletRequest request) {
+        ThrowUtils.throwIf(searchPictureByColorRequest == null, ErrorCode.PARAMS_ERROR);
+        String picColor = searchPictureByColorRequest.getPicColor();
+        Long spaceId = searchPictureByColorRequest.getSpaceId();
+        List<PictureVO> result = pictureService.searchPictureByColor(spaceId, picColor, userService.getLoginUser(request));
+        return ResultUtils.success(result);
+    }
 }
