@@ -11,7 +11,6 @@ import com.chipswu.intelligentcollaborativecloudimagerepository.exception.ErrorC
 import com.chipswu.intelligentcollaborativecloudimagerepository.exception.ThrowUtils;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.dto.space.*;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.entity.Space;
-import com.chipswu.intelligentcollaborativecloudimagerepository.model.entity.User;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.enums.SpaceLevelEnum;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.vo.SpaceVO;
 import com.chipswu.intelligentcollaborativecloudimagerepository.service.SpaceService;
@@ -67,10 +66,14 @@ public class SpaceController {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Long id = deleteRequest.getId();
-        extracted(request, id);
+        // 判断是否存在
+        Long spaceId = deleteRequest.getId();
+        Space oldSpace = spaceService.getById(spaceId);
+        ThrowUtils.throwIf(oldSpace == null, ErrorCode.NOT_FOUND_ERROR);
+        // 仅本人或管理员可编辑
+        spaceService.checkSpaceAuth(userService.getLoginUser(request),oldSpace);
         // 操作数据库
-        boolean result = spaceService.removeById(id);
+        boolean result = spaceService.removeById(spaceId);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
@@ -201,28 +204,16 @@ public class SpaceController {
         space.setEditTime(LocalDateTime.now());
         // 数据校验
         spaceService.validSpace(space, false);
-        extracted(request, spaceEditRequest.getId());
+        // 判断是否存在
+        Long spaceId = spaceEditRequest.getId();
+        Space oldSpace = spaceService.getById(spaceId);
+        ThrowUtils.throwIf(oldSpace == null, ErrorCode.NOT_FOUND_ERROR);
+        // 仅本人或管理员可编辑
+        spaceService.checkSpaceAuth(userService.getLoginUser(request),oldSpace);
         // 操作数据库
         boolean result = spaceService.updateById(space);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
-    }
-
-    /**
-     * 根据主键判断内容是否存在，且当前用户是否具有编辑权限
-     *
-     * @param request 当前请求信息
-     * @param id      主键
-     */
-    private void extracted(HttpServletRequest request, Long id) {
-        User loginUser = userService.getLoginUser(request);
-        // 判断是否存在
-        Space oldSpace = spaceService.getById(id);
-        ThrowUtils.throwIf(oldSpace == null, ErrorCode.NOT_FOUND_ERROR);
-        // 仅本人或管理员可编辑
-        if (!oldSpace.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
-        }
     }
 
     /**

@@ -891,3 +891,233 @@ export interface GetOutPaintingTaskResponse {
     }
   }
 }
+
+/**
+ * 空间资源使用分析响应类
+ */
+export interface SpaceUsageAnalyzeResponse {
+  /**
+   * 已使用大小
+   */
+  usedSize?: number
+
+  /**
+   * 总大小
+   */
+  maxSize?: number
+
+  /**
+   * 空间使用比例
+   */
+  sizeUsageRatio?: number
+
+  /**
+   * 当前图片数量
+   */
+  usedCount?: number
+
+  /**
+   * 最大图片数量
+   */
+  maxCount?: number
+
+  /**
+   * 图片数量占比
+   */
+  countUsageRatio?: number
+}
+
+/**
+ * 通用空间分析请求类
+ */
+export interface SpaceAnalyzeRequest {
+  /**
+   * 空间 ID
+   */
+  spaceId?: number
+
+  /**
+   * 是否查询公共图库
+   */
+  queryPublic?: boolean
+
+  /**
+   * 全空间分析
+   */
+  queryAll?: boolean
+}
+
+/**
+ * 空间资源使用分析请求类
+ */
+export interface SpaceUsageAnalyzeRequest extends SpaceAnalyzeRequest {}
+
+/**
+ * 空间图片分类分析响应类
+ */
+export interface SpaceCategoryAnalyzeResponse {
+  /**
+   * 图片分类
+   */
+  category?: string
+
+  /**
+   * 图片数量
+   */
+  count?: number
+
+  /**
+   * 分类图片总大小
+   */
+  totalSize?: number
+}
+
+/**
+ * 空间图片分类分析请求封装类
+ */
+export interface SpaceCategoryAnalyzeRequest extends SpaceAnalyzeRequest {}
+
+/**
+ * 空间图片标签分析封装类
+ */
+export interface SpaceTagAnalyzeRequest extends SpaceAnalyzeRequest {}
+
+/**
+ * 空间图片标签分析响应类
+ */
+export interface SpaceTagAnalyzeResponse {
+  /**
+   * 标签名称
+   */
+  tag?: string
+
+  /**
+   * 使用次数
+   */
+  count?: number
+}
+
+/**
+ * 空间图片大小分析响应类
+ */
+export interface SpaceSizeAnalyzeResponse {
+  /**
+   * 图片大小范围
+   */
+  sizeRange?: string
+
+  /**
+   * 图片数量
+   */
+  count?: number
+}
+
+/**
+ * 空间图片大小分析请求类
+ */
+export interface SpaceSizeAnalyzeRequest extends SpaceAnalyzeRequest {}
+
+/**
+ * 用户上传行为分析响应类
+ */
+export interface SpaceUserAnalyzeResponse {
+  /**
+   * 时间区间
+   */
+  period?: string
+
+  /**
+   * 上传数量
+   */
+  count?: number
+}
+
+/**
+ * 用户上传行为分析请求类
+ */
+export interface SpaceUserAnalyzeRequest extends SpaceAnalyzeRequest{
+  /**
+   * 用户 ID
+   */
+  userId?:number
+
+  /**
+   * 时间维度：day / week / month
+   */
+  timeDimension?:string
+}
+
+/**
+ * 空间实体类
+ */
+export interface Space {
+  /**
+   * id
+   */
+  id?: number
+
+  /**
+   * 空间名称
+   */
+  spaceName?: string
+
+  /**
+   * 空间级别：0-普通版 1-专业版 2-旗舰版
+   */
+  spaceLevel?: number
+
+  /**
+   * 空间图片的最大总大小
+   */
+  maxSize?: number
+
+  /**
+   * 空间图片的最大数量
+   */
+  maxCount?: number
+
+  /**
+   * 当前空间下图片的总大小
+   */
+  totalSize?: number
+
+  /**
+   * 当前空间下的图片数量
+   */
+  totalCount?: number
+
+  /**
+   * 创建用户 id
+   */
+  userId?: number
+
+  /**
+   * 创建时间
+   */
+  createTime?: string
+
+  /**
+   * 编辑时间
+   */
+  editTime?: string
+
+  /**
+   * 更新时间
+   */
+  updateTime?: string
+
+  /**
+   * 是否删除
+   */
+  isDelete?: number
+}
+
+/**
+ * 空间使用排行分析请求类
+ */
+export interface SpaceRankAnalyzeRequest extends SpaceAnalyzeRequest{
+  /**
+   * 排名前 N 的空间
+   */
+  topN?:number
+}

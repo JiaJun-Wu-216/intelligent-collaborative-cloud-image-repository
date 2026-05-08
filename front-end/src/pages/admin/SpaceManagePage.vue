@@ -4,6 +4,12 @@
       <a-flex justify="space-between">
         <h2>空间管理</h2>
         <a-space>
+          <a-button type="primary" ghost href="/space-analyze?queryPublic=1" target="_blank">
+            分析公共图库
+          </a-button>
+          <a-button type="primary" ghost href="/space-analyze?queryAll=1" target="_blank">
+            分析全空间
+          </a-button>
           <a-button type="primary" href="/add-space" target="_blank">+ 创建空间</a-button>
         </a-space>
       </a-flex>
@@ -55,6 +61,9 @@
         </template>
         <template v-else-if="column.key === 'action'">
           <a-space wrap>
+            <a-button type="link" :href="`/space-analyze?spaceId=${record.id}`" target="_blank">
+              分析
+            </a-button>
             <a-button type="link" :href="`/add-space?id=${record.id}`" target="_blank"
               >编辑</a-button
             >
@@ -67,13 +76,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
-import type { Space, SpaceQueryRequest } from '@/api/EntityType.ts'
-import { deleteSpace, doSpaceReview, listSpaceByPage } from '@/api/SpaceAPI.ts'
+import {computed, onMounted, reactive, ref} from 'vue'
+import type {Space, SpaceQueryRequest} from '@/api/EntityType.ts'
+import {deleteSpace, listSpaceByPage} from '@/api/SpaceAPI.ts'
 import dayjs from 'dayjs'
-import { message } from 'ant-design-vue'
-import { SPACE_LEVEL_MAP, SPACE_LEVEL_OPTIONS } from '@/constants/space.ts'
-import { formatSize } from '@/utils'
+import {message} from 'ant-design-vue'
+import {SPACE_LEVEL_MAP, SPACE_LEVEL_OPTIONS} from '@/constants/space.ts'
+import {formatSize} from '@/utils'
 
 const columns = [
   {

@@ -5,7 +5,13 @@ import type {
   LoginUserVO,
   PictureTagCategory,
   PictureVO,
+  Space,
+  SpaceCategoryAnalyzeResponse,
   SpaceLevel,
+  SpaceSizeAnalyzeResponse,
+  SpaceTagAnalyzeResponse,
+  SpaceUsageAnalyzeResponse,
+  SpaceUserAnalyzeResponse,
   SpaceVO,
 } from '@/api/EntityType.ts'
 
@@ -84,5 +90,41 @@ export interface ResponseCreateOutPaintingTaskResponse {
 export interface ResponseGetOutPaintingTaskResponse {
   code?: number
   data?: GetOutPaintingTaskResponse
+  message?: string
+}
+
+export interface ResponseSpaceUsageAnalyzeResponse {
+  code?: number
+  data?: SpaceUsageAnalyzeResponse
+  message?: string
+}
+
+export interface ResponseSpaceCategoryAnalyzeResponse {
+  code?: number
+  data?: SpaceCategoryAnalyzeResponse[]
+  message?: string
+}
+
+export interface ResponseSpaceTagAnalyzeResponse {
+  code?: number
+  data?: SpaceTagAnalyzeResponse[]
+  message?: string
+}
+
+export interface ResponseSpaceSizeAnalyzeResponse {
+  code?: number
+  data?: SpaceSizeAnalyzeResponse[]
+  message?: string
+}
+
+export interface ResponseSpaceUserAnalyzeResponse {
+  code?: number
+  data?: SpaceUserAnalyzeResponse[]
+  message?: string
+}
+
+export interface ResponseSpace {
+  code?: number
+  data?: Space[]
   message?: string
 }
