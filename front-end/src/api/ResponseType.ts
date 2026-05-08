@@ -1,4 +1,6 @@
 import type {
+  CreateOutPaintingTaskResponse,
+  GetOutPaintingTaskResponse,
   ImageSearchResult,
   LoginUserVO,
   PictureTagCategory,
@@ -70,5 +72,17 @@ export interface ResponseSpaceLevelList {
 export interface ResponseImageSearchResult {
   code?: number
   data?: ImageSearchResult[]
+  message?: string
+}
+
+export interface ResponseCreateOutPaintingTaskResponse {
+  code?: number
+  data?: CreateOutPaintingTaskResponse
+  message?: string
+}
+
+export interface ResponseGetOutPaintingTaskResponse {
+  code?: number
+  data?: GetOutPaintingTaskResponse
   message?: string
 }

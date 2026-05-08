@@ -3,6 +3,7 @@ package com.chipswu.intelligentcollaborativecloudimagerepository.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.chipswu.intelligentcollaborativecloudimagerepository.api.aliyunai.model.CreateOutPaintingTaskResponse;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.dto.picture.*;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.entity.Picture;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.entity.User;
@@ -135,4 +136,14 @@ public interface PictureService extends IService<Picture> {
      * @param loginUser                 当前登录用户
      */
     void editPictureByBatch(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser);
+
+    /**
+     * 创建扩图任务
+     *
+     * @param createPictureOutPaintingTaskRequest 创建扩图任务请求信息
+     * @param loginUser                           当前登录用户信息
+     */
+    CreateOutPaintingTaskResponse createPictureOutPaintingTask(
+            CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest,
+            User loginUser);
 }

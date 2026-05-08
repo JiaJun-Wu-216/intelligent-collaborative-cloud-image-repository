@@ -2,9 +2,13 @@ package com.chipswu.intelligentcollaborativecloudimagerepository.controller;
 
 import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chipswu.intelligentcollaborativecloudimagerepository.annotation.AuthCheck;
+import com.chipswu.intelligentcollaborativecloudimagerepository.api.aliyunai.AliYunAiApi;
+import com.chipswu.intelligentcollaborativecloudimagerepository.api.aliyunai.model.CreateOutPaintingTaskResponse;
+import com.chipswu.intelligentcollaborativecloudimagerepository.api.aliyunai.model.GetOutPaintingTaskResponse;
 import com.chipswu.intelligentcollaborativecloudimagerepository.api.imagesearch.ImageSearchApiFacade;
 import com.chipswu.intelligentcollaborativecloudimagerepository.api.imagesearch.model.ImageSearchResult;
 import com.chipswu.intelligentcollaborativecloudimagerepository.common.BaseResponse;
@@ -59,6 +63,9 @@ public class PictureController {
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private AliYunAiApi aliYunAiApi;
 
     /**
      * 本地缓存
@@ -431,5 +438,37 @@ public class PictureController {
         User loginUser = userService.getLoginUser(request);
         pictureService.editPictureByBatch(pictureEditByBatchRequest, loginUser);
         return ResultUtils.success(true);
+    }
+
+    /**
+     * 创建 AI 扩图任务
+     *
+     * @param createPictureOutPaintingTaskRequest 创建扩图任务请求信息
+     * @param request                             当前请求信息
+     * @return 创建扩图任务结果信息
+     */
+    @PostMapping("/out-painting/create-task")
+    public BaseResponse<CreateOutPaintingTaskResponse> createPictureOutPaintingTask(@RequestBody CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest,
+                                                                                    HttpServletRequest request) {
+        if (createPictureOutPaintingTaskRequest == null || createPictureOutPaintingTaskRequest.getPictureId() == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        CreateOutPaintingTaskResponse response = pictureService.createPictureOutPaintingTask(
+                createPictureOutPaintingTaskRequest,
+                userService.getLoginUser(request));
+        return ResultUtils.success(response);
+    }
+
+    /**
+     * 查询 AI 扩图任务
+     *
+     * @param taskId 任务 ID
+     * @return 查询扩图任务结果信息
+     */
+    @GetMapping("/out-painting/get-task")
+    public BaseResponse<GetOutPaintingTaskResponse> getPictureOutPaintingTask(String taskId) {
+        ThrowUtils.throwIf(StrUtil.isBlank(taskId), ErrorCode.PARAMS_ERROR);
+        GetOutPaintingTaskResponse task = aliYunAiApi.getOutPaintingTask(taskId);
+        return ResultUtils.success(task);
     }
 }

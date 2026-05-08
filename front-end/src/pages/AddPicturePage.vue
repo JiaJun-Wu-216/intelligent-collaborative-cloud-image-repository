@@ -17,6 +17,28 @@
         <url-picture-upload :picture="picture" :spaceId="spaceId" :on-success="onSuccess" />
       </a-tab-pane>
     </a-tabs>
+    <!-- 图片编辑区域 -->
+    <div v-if="picture" class="edit-bar">
+      <a-space size="middle">
+        <a-button :icon="h(EditOutlined)" @click="doEditPicture">编辑图片</a-button>
+        <a-button type="primary" :icon="h(FullscreenOutlined)" @click="doImagePainting"
+          >AI 扩图</a-button
+        >
+      </a-space>
+    </div>
+    <ImageCropper
+      ref="imageCropperRef"
+      :imageUrl="picture?.url"
+      :picture="picture"
+      :spaceId="spaceId"
+      :onSuccess="onCropSuccess"
+    />
+    <ImageOutPainting
+      ref="imageOutPaintingRef"
+      :picture="picture"
+      :spaceId="spaceId"
+      :onSuccess="onImageOutPaintingSuccess"
+    />
     <!-- 图片信息表单 -->
     <a-form
       layout="vertical"
@@ -66,12 +88,15 @@
 
 <script setup lang="ts">
 import PictureUpload from '@/components/PictureUpload.vue'
-import {computed, onMounted, reactive, ref} from 'vue'
+import {computed, h, onMounted, reactive, ref} from 'vue'
 import type {PictureEditRequest, PictureVO} from '@/api/EntityType.ts'
 import {editPicture, getPictureVOById, getTagCategory} from '@/api/PictureAPI.ts'
 import {message} from 'ant-design-vue'
 import {useRoute, useRouter} from 'vue-router'
 import UrlPictureUpload from '@/components/UrlPictureUpload.vue'
+import ImageCropper from '@/components/ImageCropper.vue'
+import {EditOutlined, FullscreenOutlined} from '@ant-design/icons-vue'
+import ImageOutPainting from '@/components/ImageOutPainting.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -79,13 +104,7 @@ const route = useRoute()
 const uploadType = ref<'file' | 'url'>('file')
 
 const picture = ref<PictureVO>()
-const pictureForm = reactive<PictureEditRequest>({
-  category: '',
-  id: 0,
-  introduction: '',
-  name: '',
-  tags: [],
-})
+const pictureForm = reactive<PictureEditRequest>({})
 
 // 空间 ID
 const spaceId = computed(() => {
@@ -172,6 +191,38 @@ const getOldPicture = async () => {
   }
 }
 
+// -------------- 图片编辑器引用 --------------
+const imageCropperRef = ref()
+
+// 编辑图片
+const doEditPicture = () => {
+  if (imageCropperRef.value) {
+    imageCropperRef.value?.openModal()
+  }
+}
+
+// 编辑成功事件
+const onCropSuccess = (newPicture: PictureVO) => {
+  picture.value = newPicture
+  console.log(picture.value)
+}
+
+// -------------- AI 扩图引用 --------------
+const imageOutPaintingRef = ref()
+
+// 打开 AI 扩图弹窗
+const doImagePainting = () => {
+  if (imageOutPaintingRef.value) {
+    imageOutPaintingRef.value?.openModal()
+  }
+}
+
+// AI 扩图成功保存事件
+const onImageOutPaintingSuccess = (newPicture: PictureVO) => {
+  picture.value = newPicture
+  console.log(picture.value)
+}
+
 onMounted(() => {
   getTagCategoryOptions()
   getOldPicture()
@@ -182,5 +233,10 @@ onMounted(() => {
 #addPicturePage {
   max-width: 720px;
   margin: 0 auto;
+}
+
+#addPicturePage .edit-bar {
+  text-align: center;
+  margin: 16px 0;
 }
 </style>

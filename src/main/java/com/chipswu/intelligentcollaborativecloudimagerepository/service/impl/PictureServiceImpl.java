@@ -8,6 +8,9 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.chipswu.intelligentcollaborativecloudimagerepository.api.aliyunai.AliYunAiApi;
+import com.chipswu.intelligentcollaborativecloudimagerepository.api.aliyunai.model.CreateOutPaintingTaskRequest;
+import com.chipswu.intelligentcollaborativecloudimagerepository.api.aliyunai.model.CreateOutPaintingTaskResponse;
 import com.chipswu.intelligentcollaborativecloudimagerepository.exception.BusinessException;
 import com.chipswu.intelligentcollaborativecloudimagerepository.exception.ErrorCode;
 import com.chipswu.intelligentcollaborativecloudimagerepository.exception.ThrowUtils;
@@ -43,10 +46,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.awt.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -75,6 +76,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
 
     @Resource
     private OSSUtils ossUtils;
+
+    @Resource
+    private AliYunAiApi aliYunAiApi;
 
     /**
      * 上传图片
@@ -683,5 +687,29 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             log.error("名称解析错误", e);
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "名称解析错误");
         }
+    }
+
+    /**
+     * 创建扩图任务
+     *
+     * @param createPictureOutPaintingTaskRequest 创建扩图任务请求信息
+     * @param loginUser                    当前登录用户信息
+     */
+    @Override
+    public CreateOutPaintingTaskResponse createPictureOutPaintingTask(CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest, User loginUser) {
+        // 获取图片信息
+        Long pictureId = createPictureOutPaintingTaskRequest.getPictureId();
+        Picture picture = Optional.ofNullable(this.getById(pictureId))
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_ERROR, "图片不存在"));
+        // 校验权限
+        checkPictureAuth(loginUser,picture);
+        // 创建扩图任务
+        CreateOutPaintingTaskRequest createOutPaintingTaskRequest = new CreateOutPaintingTaskRequest();
+        CreateOutPaintingTaskRequest.Input input = new CreateOutPaintingTaskRequest.Input();
+        input.setImageUrl(picture.getUrl());
+        createOutPaintingTaskRequest.setInput(input);
+        createOutPaintingTaskRequest.setParameters(createPictureOutPaintingTaskRequest.getParameters());
+        // 创建任务
+        return aliYunAiApi.createOutPaintingTask(createOutPaintingTaskRequest);
     }
 }

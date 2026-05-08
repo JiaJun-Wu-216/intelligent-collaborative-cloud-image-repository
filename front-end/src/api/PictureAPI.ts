@@ -2,6 +2,8 @@ import {request} from '@/request'
 import type {
   ResponseAny,
   ResponseBoolean,
+  ResponseCreateOutPaintingTaskResponse,
+  ResponseGetOutPaintingTaskResponse,
   ResponseImageSearchResult,
   ResponseNumber,
   ResponsePictureTagCategory,
@@ -9,6 +11,7 @@ import type {
   ResponsePictureVOList,
 } from '@/api/ResponseType.ts'
 import type {
+  CreatePictureOutPaintingTaskRequest,
   DeleteRequest,
   PictureEditByBatchRequest,
   PictureEditRequest,
@@ -149,4 +152,28 @@ export const editPictureByBatch = (
   pictureEditByBatchRequest: PictureEditByBatchRequest,
 ): Promise<ResponseBoolean> => {
   return request.post('/picture/edit/batch', pictureEditByBatchRequest)
+}
+
+/**
+ * 创建 AI 扩图任务
+ * @param createPictureOutPaintingTaskRequest 创建扩图任务请求信息
+ */
+export const createPictureOutPaintingTask = (
+  createPictureOutPaintingTaskRequest: CreatePictureOutPaintingTaskRequest,
+): Promise<ResponseCreateOutPaintingTaskResponse> => {
+  return request.post('/picture/out-painting/create-task', createPictureOutPaintingTaskRequest)
+}
+
+/**
+ * 查询 AI 扩图任务
+ * @param taskId  任务 ID
+ */
+export const getPictureOutPaintingTask = (
+  taskId: string,
+): Promise<ResponseGetOutPaintingTaskResponse> => {
+  return request.get('/picture/out-painting/get-task', {
+    params: {
+      taskId,
+    },
+  })
 }
