@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chipswu.intelligentcollaborativecloudimagerepository.constants.UserConstant;
 import com.chipswu.intelligentcollaborativecloudimagerepository.exception.BusinessException;
 import com.chipswu.intelligentcollaborativecloudimagerepository.exception.ErrorCode;
+import com.chipswu.intelligentcollaborativecloudimagerepository.manager.auth.StpKit;
 import com.chipswu.intelligentcollaborativecloudimagerepository.mapper.UserMapper;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.dto.user.UserLoginRequest;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.dto.user.UserQueryRequest;
@@ -132,6 +133,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         // 4.保存用户的登陆态
         request.getSession().setAttribute(UserConstant.USER_LOGIN_STATE, user);
+        // 记录用户登陆态到 Sa-Token，便于空间鉴权时使用，注意保证该用户信息与 SpringSession 中的过期时间一致
+        StpKit.SPACE.login(user.getId());
+        StpKit.SPACE.getSession().set(UserConstant.USER_LOGIN_STATE, user);
         return this.getLoginUserVO(user);
     }
 

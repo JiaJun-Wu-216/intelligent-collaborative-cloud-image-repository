@@ -2,12 +2,27 @@
   <div id="spaceDetailPage">
     <!-- 空间信息 -->
     <a-flex justify="space-between" style="margin-bottom: 16px">
-      <h2>{{ space.spaceName }}（私有空间）</h2>
+      <h2>{{ space.spaceName }}（{{ SPACE_TYPE_MAP[space.spaceType] }}）</h2>
       <a-space size="middle">
-        <a-button type="primary" :href="`/add-picture?spaceId=${id}`" target="_blank"
+        <a-button
+          type="primary"
+          :href="`/add-picture?spaceId=${id}`"
+          target="_blank"
+          v-if="canUploadPicture"
           >+ 创建图片</a-button
         >
         <a-button
+          v-if="canManageSpaceUser"
+          type="primary"
+          ghost
+          :icon="h(TeamOutlined)"
+          :href="`/space-user-manage/${id}`"
+          target="_blank"
+        >
+          成员管理
+        </a-button>
+        <a-button
+          v-if="canManageSpaceUser"
           type="primary"
           ghost
           :icon="h(BarChartOutlined)"
@@ -16,8 +31,9 @@
         >
           空间分析
         </a-button>
-
-        <a-button :icon="h(EditOutlined)" @click="doBatchEdit"> 批量编辑</a-button>
+        <a-button v-if="canEditPicture" :icon="h(EditOutlined)" @click="doBatchEdit">
+          批量编辑</a-button
+        >
         <a-tooltip
           :title="`占用空间 ${formatSize(space.totalSize)} / ${formatSize(space.maxSize)}`"
         >
@@ -41,6 +57,8 @@
       :loading="loading"
       :showOption="true"
       :onReload="fetchPictureVOListData"
+      :canEdit="canEditPicture"
+      :canDelete="canDeletePicture"
     />
     <!-- 分页 -->
     <a-pagination
@@ -60,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import {h, onMounted, ref} from 'vue'
+import {computed, h, onMounted, ref, watch} from 'vue'
 import type {PictureQueryRequest, PictureVO, SpaceVO} from '@/api/EntityType.ts'
 import {message} from 'ant-design-vue'
 import {getSpaceVOById} from '@/api/SpaceAPI.ts'
@@ -72,7 +90,8 @@ import PictureSearchForm from '@/components/PictureSearchForm.vue'
 import {ColorPicker} from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
 import BatchEditPicture from '@/components/BatchEditPicture.vue'
-import {BarChartOutlined, EditOutlined} from '@ant-design/icons-vue'
+import {BarChartOutlined, EditOutlined, TeamOutlined} from '@ant-design/icons-vue'
+import {SPACE_PERMISSION_ENUM, SPACE_TYPE_MAP} from '@/constants/space.ts'
 
 const props = defineProps<{
   id: string | number
@@ -80,6 +99,19 @@ const props = defineProps<{
 
 const space = ref<SpaceVO>({})
 const router = useRouter()
+
+// 通用权限检查函数
+const createPermissionChecker = (permission: string) => {
+  return computed(() => {
+    return (space.value.permissionList ?? []).includes(permission)
+  })
+}
+
+// 定义权限检查
+const canManageSpaceUser = createPermissionChecker(SPACE_PERMISSION_ENUM.SPACE_USER_MANAGE)
+const canUploadPicture = createPermissionChecker(SPACE_PERMISSION_ENUM.PICTURE_UPLOAD)
+const canEditPicture = createPermissionChecker(SPACE_PERMISSION_ENUM.PICTURE_EDIT)
+const canDeletePicture = createPermissionChecker(SPACE_PERMISSION_ENUM.PICTURE_DELETE)
 
 // 获取空间详情
 const fetchSpaceDetail = async () => {
@@ -177,6 +209,15 @@ const batchEditPictureModalRef = ref()
 const onBatchEditPictureSuccess = () => {
   fetchPictureVOListData()
 }
+
+// 空间 ID 改变时，必须重新获取数据
+watch(
+  () => props.id,
+  (newSpaceId) => {
+    fetchSpaceDetail()
+    fetchPictureVOListData()
+  },
+)
 
 onMounted(() => {
   fetchSpaceDetail()

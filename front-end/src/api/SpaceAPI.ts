@@ -10,6 +10,7 @@ import type {
   ResponseSpaceTagAnalyzeResponse,
   ResponseSpaceUsageAnalyzeResponse,
   ResponseSpaceUserAnalyzeResponse,
+  ResponseSpaceUserVOList,
   ResponseSpaceVO,
 } from '@/api/ResponseType.ts'
 import type {
@@ -23,7 +24,10 @@ import type {
   SpaceTagAnalyzeRequest,
   SpaceUpdateRequest,
   SpaceUsageAnalyzeRequest,
+  SpaceUserAddRequest,
   SpaceUserAnalyzeRequest,
+  SpaceUserEditRequest,
+  SpaceUserQueryRequest,
 } from '@/api/EntityType.ts'
 
 /**
@@ -151,4 +155,47 @@ export const getSpaceRankAnalyze = (
   spaceRankAnalyzeRequest: SpaceRankAnalyzeRequest,
 ): Promise<ResponseSpace> => {
   return request.post('/space/analyze/rank', spaceRankAnalyzeRequest)
+}
+
+/**
+ * 查询我加入的团队空间列表
+ */
+export const listMyTeamSpace = (): Promise<ResponseSpaceUserVOList> => {
+  return request.post('/space-user/list/my')
+}
+
+/**
+ * 查询成员信息列表
+ * @param spaceUserQueryRequest 查询空间成员请求信息
+ */
+export const listSpaceUser = (
+  spaceUserQueryRequest: SpaceUserQueryRequest,
+): Promise<ResponseSpaceUserVOList> => {
+  return request.post('/space-user/list', spaceUserQueryRequest)
+}
+
+/**
+ * 从空间移除成员
+ * @param deleteRequest 删除请求信息
+ */
+export const deleteSpaceUser = (deleteRequest: DeleteRequest): Promise<ResponseBoolean> => {
+  return request.post('/space-user/delete', deleteRequest)
+}
+
+/**
+ * 编辑成员信息（设置权限）
+ * @param spaceUserEditRequest  编辑空间成员请求信息
+ */
+export const editSpaceUser = (
+  spaceUserEditRequest: SpaceUserEditRequest,
+): Promise<ResponseBoolean> => {
+  return request.post('/space-user/edit', spaceUserEditRequest)
+}
+
+/**
+ * 添加成员到空间
+ * @param spaceUserAddRequest 添加空间成员请求信息
+ */
+export const addSpaceUser = (spaceUserAddRequest: SpaceUserAddRequest): Promise<ResponseNumber> => {
+  return request.post('/space-user/add', spaceUserAddRequest)
 }

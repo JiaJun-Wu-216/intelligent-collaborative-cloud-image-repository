@@ -15,11 +15,15 @@ import com.chipswu.intelligentcollaborativecloudimagerepository.mapper.SpaceMapp
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.dto.space.SpaceAddRequest;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.dto.space.SpaceQueryRequest;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.entity.Space;
+import com.chipswu.intelligentcollaborativecloudimagerepository.model.entity.SpaceUser;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.entity.User;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.enums.SpaceLevelEnum;
+import com.chipswu.intelligentcollaborativecloudimagerepository.model.enums.SpaceRoleEnum;
+import com.chipswu.intelligentcollaborativecloudimagerepository.model.enums.SpaceTypeEnum;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.vo.SpaceVO;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.vo.UserVO;
 import com.chipswu.intelligentcollaborativecloudimagerepository.service.SpaceService;
+import com.chipswu.intelligentcollaborativecloudimagerepository.service.SpaceUserService;
 import com.chipswu.intelligentcollaborativecloudimagerepository.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,6 +51,13 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space> implements
     @Resource
     private TransactionTemplate transactionTemplate;
 
+    @Resource
+    private SpaceUserService spaceUserService;
+
+    /*@Resource
+    @Lazy
+    private DynamicShardingManager dynamicShardingManager;*/
+
     private final Map<Long, Object> lockMap = new ConcurrentHashMap<>();
 
     /**
@@ -68,6 +79,9 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space> implements
         if (space.getSpaceLevel() == null) {
             space.setSpaceLevel(SpaceLevelEnum.COMMON.getValue());
         }
+        if (space.getSpaceType() == null) {
+            space.setSpaceType(SpaceTypeEnum.PRIVATE.getValue());
+        }
         // 填充空间容量和大小
         this.fillSpaceBySpaceLevel(space);
         // 2.校验参数
@@ -78,7 +92,7 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space> implements
         if (SpaceLevelEnum.COMMON.getValue() != space.getSpaceLevel() && !userService.isAdmin(loginUser)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无权限创建指定级别的空间");
         }
-        // 4.控制同一用户只能创建一个私有空间
+        // 4.控制同一用户只能创建一个私有空间以及一个团队空间
         //String lock = String.valueOf(userId).intern();
         Object lock = lockMap.computeIfAbsent(userId, key -> new Object());
         synchronized (lock) {
@@ -87,12 +101,24 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space> implements
                     // 判断是否已有空间
                     boolean exists = this.lambdaQuery()
                             .eq(Space::getUserId, userId)
+                            .eq(Space::getSpaceType, space.getSpaceType())
                             .exists();
                     // 如果已有空间，就不能再创建
-                    ThrowUtils.throwIf(exists, ErrorCode.OPERATION_ERROR, "每个用户仅能拥有一个私有空间");
+                    ThrowUtils.throwIf(exists, ErrorCode.OPERATION_ERROR, "每个用户每类空间只能创建一个");
                     // 没有空间，进行创建
                     boolean result = this.save(space);
                     ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR, "保存空间到数据库失败");
+                    // 创建成功后，如果是团队空间，关联新增团队成员记录
+                    if (SpaceTypeEnum.TEAM.getValue() == space.getSpaceType()) {
+                        SpaceUser spaceUser = new SpaceUser();
+                        spaceUser.setSpaceId(space.getId());
+                        spaceUser.setUserId(userId);
+                        spaceUser.setSpaceRole(SpaceRoleEnum.ADMIN.getValue());
+                        result = spaceUserService.save(spaceUser);
+                        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR, "创建团队成员记录失败");
+                    }
+                    // 创建分表（仅对团队空间生效）
+                    //dynamicShardingManager.createSpacePictureTable(space);
                     // 保存成功，返回新写入的主键
                     return space.getId();
                 });
@@ -123,9 +149,11 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space> implements
         Integer spaceLevel = spaceQueryRequest.getSpaceLevel();
         String sortField = spaceQueryRequest.getSortField();
         String sortOrder = spaceQueryRequest.getSortOrder();
+        Integer spaceType = spaceQueryRequest.getSpaceType();
         queryWrapper.eq(ObjUtil.isNotEmpty(id), "id", id);
         queryWrapper.eq(ObjUtil.isNotEmpty(userId), "user_id", userId);
         queryWrapper.eq(ObjUtil.isNotEmpty(spaceLevel), "space_level", spaceLevel);
+        queryWrapper.eq(ObjUtil.isNotEmpty(spaceType), "space_type", spaceType);
         queryWrapper.like(StrUtil.isNotBlank(spaceName), "space_name", spaceName);
         // 排序
         queryWrapper.orderBy(StrUtil.isNotEmpty(sortField), sortOrder.equals("ascend"), sortField);
@@ -199,13 +227,18 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space> implements
         String spaceName = space.getSpaceName();
         Integer spaceLevel = space.getSpaceLevel();
         SpaceLevelEnum spaceLevelEnum = SpaceLevelEnum.getEnumByValue(spaceLevel);
+        Integer spaceType = space.getSpaceType();
+        SpaceTypeEnum spaceTypeEnum = SpaceTypeEnum.getEnumByValue(spaceType);
         // 创建时校验
         if (add) {
             if (StrUtil.isBlank(spaceName)) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "空间名称不能为空");
             }
-            if (spaceLevelEnum == null) {
+            if (spaceLevel == null) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "空间级别不能为空");
+            }
+            if (spaceType == null) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "空间类型不能为空");
             }
         }
         // 修改数据时
@@ -214,6 +247,9 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space> implements
         }
         if (spaceLevel != null && spaceLevelEnum == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "空间级别不存在");
+        }
+        if (spaceType != null && spaceTypeEnum == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "空间类型不存在");
         }
     }
 

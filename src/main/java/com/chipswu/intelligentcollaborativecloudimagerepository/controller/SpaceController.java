@@ -9,6 +9,7 @@ import com.chipswu.intelligentcollaborativecloudimagerepository.constants.UserCo
 import com.chipswu.intelligentcollaborativecloudimagerepository.exception.BusinessException;
 import com.chipswu.intelligentcollaborativecloudimagerepository.exception.ErrorCode;
 import com.chipswu.intelligentcollaborativecloudimagerepository.exception.ThrowUtils;
+import com.chipswu.intelligentcollaborativecloudimagerepository.manager.auth.SpaceUserAuthManager;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.dto.space.*;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.entity.Space;
 import com.chipswu.intelligentcollaborativecloudimagerepository.model.enums.SpaceLevelEnum;
@@ -39,6 +40,9 @@ public class SpaceController {
 
     @Resource
     private SpaceService spaceService;
+
+    @Resource
+    private SpaceUserAuthManager spaceUserAuthManager;
 
     /**
      * 创建空间
@@ -141,8 +145,11 @@ public class SpaceController {
                 .eq(Space::getId, id)
                 .one();
         ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR);
+        SpaceVO spaceVO = spaceService.getSpaceVO(space, request);
+        List<String> permissionList = spaceUserAuthManager.getPermissionList(space, userService.getLoginUser(request));
+        spaceVO.setPermissionList(permissionList);
         // 获取封装类
-        return ResultUtils.success(spaceService.getSpaceVO(space, request));
+        return ResultUtils.success(spaceVO);
     }
 
     /**

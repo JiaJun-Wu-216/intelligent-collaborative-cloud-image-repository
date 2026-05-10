@@ -32,8 +32,8 @@
             <template #actions v-if="showOption">
               <ShareAltOutlined @click="(e: any) => doShare(e, picture)" />
               <SearchOutlined @click="(e: any) => doSearch(e, picture)" />
-              <EditOutlined @click="(e: any) => doEdit(e, picture)" />
-              <DeleteOutlined @click="(e: any) => doDelete(e, picture)" />
+              <EditOutlined v-if="canEdit" @click="(e: any) => doEdit(e, picture)" />
+              <DeleteOutlined v-if="canDelete" @click="(e: any) => doDelete(e, picture)" />
             </template>
           </a-card>
         </a-list-item>
@@ -62,6 +62,8 @@ interface Props {
   loading?: boolean
   showOption?: boolean
   onReload?: () => void
+  canEdit?: boolean
+  canDelete?: boolean
 }
 
 const router = useRouter()
@@ -70,6 +72,8 @@ const props = withDefaults(defineProps<Props>(), {
   dataList: () => [],
   loading: false,
   showOption: false,
+  canEdit: false,
+  canDelete: false,
 })
 
 /**

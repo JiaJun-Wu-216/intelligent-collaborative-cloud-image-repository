@@ -12,6 +12,7 @@ import type {
   SpaceTagAnalyzeResponse,
   SpaceUsageAnalyzeResponse,
   SpaceUserAnalyzeResponse,
+  SpaceUserVO,
   SpaceVO,
 } from '@/api/EntityType.ts'
 
@@ -126,5 +127,11 @@ export interface ResponseSpaceUserAnalyzeResponse {
 export interface ResponseSpace {
   code?: number
   data?: Space[]
+  message?: string
+}
+
+export interface ResponseSpaceUserVOList {
+  code?: number
+  data?: SpaceUserVO[]
   message?: string
 }

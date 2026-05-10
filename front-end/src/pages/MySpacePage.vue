@@ -10,6 +10,7 @@ import {userLoginUserStore} from '@/stores/userLoginUserStore.ts'
 import {listSpaceVOByPage} from '@/api/SpaceAPI.ts'
 import {message} from 'ant-design-vue'
 import {onMounted} from 'vue'
+import {SPACE_TYPE_ENUM} from '@/constants/space.ts'
 
 const router = useRouter()
 const loginUserStore = userLoginUserStore()
@@ -26,6 +27,7 @@ const checkUserSpace = async () => {
     userId: loginUser.id,
     current: 1,
     pageSize: 1,
+    spaceType: SPACE_TYPE_ENUM.PRIVATE,
   })
   if (response.code === 0) {
     // 判断是否有已创建的空间
@@ -43,7 +45,7 @@ const checkUserSpace = async () => {
   }
 }
 
-onMounted(()=>{
+onMounted(() => {
   checkUserSpace()
 })
 </script>

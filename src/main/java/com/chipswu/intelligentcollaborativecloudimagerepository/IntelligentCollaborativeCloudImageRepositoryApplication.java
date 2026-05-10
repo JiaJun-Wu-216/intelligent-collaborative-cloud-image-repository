@@ -22,6 +22,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
                 )
         )
 )*/
+//@SpringBootApplication(exclude = {ShardingAutoTableRuleConfiguration.class})
 @SpringBootApplication
 @Slf4j
 @EnableAsync

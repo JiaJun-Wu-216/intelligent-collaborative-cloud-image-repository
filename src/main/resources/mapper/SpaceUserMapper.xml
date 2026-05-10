@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chipswu.intelligentcollaborativecloudimagerepository.mapper.SpaceUserMapper">
+  <resultMap id="BaseResultMap" type="com.chipswu.intelligentcollaborativecloudimagerepository.model.entity.SpaceUser">
+    <!--@mbg.generated-->
+    <!--@Table `space_user`-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="space_id" jdbcType="BIGINT" property="spaceId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="space_role" jdbcType="VARCHAR" property="spaceRole" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+      <!--@mbg.generated-->
+      `id`, `space_id`, `user_id`, `space_role`, `create_time`, `update_time`
+  </sql>
+</mapper>

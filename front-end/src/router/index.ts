@@ -85,6 +85,12 @@ const router = createRouter({
         access: ACCESS_ENUM.ADMIN,
       },
     },
+    {
+      path: '/space-user-manage/:id',
+      name: 'spaceUserManage',
+      component: () => import('@/pages/admin/SpaceUserManagePage.vue'),
+      props: true,
+    },
   ],
 })
 

@@ -150,6 +150,11 @@ export interface PictureVO {
    * 主色调
    */
   picColor?: string
+
+  /**
+   * 权限列表
+   */
+  permissionList?: string[]
 }
 
 /**
@@ -479,6 +484,11 @@ export interface SpaceVO {
   spaceLevel?: number
 
   /**
+   * 空间类型：0-私有 1-团队
+   */
+  spaceType?: number
+
+  /**
    * 空间图片的最大总大小
    */
   maxSize?: number
@@ -527,6 +537,11 @@ export interface SpaceVO {
    * 创建用户信息
    */
   user?: UserVO
+
+  /**
+   * 权限列表
+   */
+  permissionList?: string[]
 }
 
 /**
@@ -552,6 +567,11 @@ export interface SpaceQueryRequest extends PageRequest {
    * 空间名称
    */
   spaceName?: string
+
+  /**
+   * 空间类型：0-私有 1-团队
+   */
+  spaceType?: number
 }
 
 /**
@@ -567,6 +587,11 @@ export interface SpaceAddRequest {
    * 空间级别：0-普通版 1-专业版 2-旗舰版
    */
   spaceLevel?: number
+
+  /**
+   * 空间类型：0-私有 1-团队
+   */
+  spaceType?: number
 }
 
 /**
@@ -1035,16 +1060,16 @@ export interface SpaceUserAnalyzeResponse {
 /**
  * 用户上传行为分析请求类
  */
-export interface SpaceUserAnalyzeRequest extends SpaceAnalyzeRequest{
+export interface SpaceUserAnalyzeRequest extends SpaceAnalyzeRequest {
   /**
    * 用户 ID
    */
-  userId?:number
+  userId?: number
 
   /**
    * 时间维度：day / week / month
    */
-  timeDimension?:string
+  timeDimension?: string
 }
 
 /**
@@ -1115,9 +1140,114 @@ export interface Space {
 /**
  * 空间使用排行分析请求类
  */
-export interface SpaceRankAnalyzeRequest extends SpaceAnalyzeRequest{
+export interface SpaceRankAnalyzeRequest extends SpaceAnalyzeRequest {
   /**
    * 排名前 N 的空间
    */
-  topN?:number
+  topN?: number
+}
+
+/**
+ * 空间用户封装类
+ */
+export interface SpaceUserVO {
+  /**
+   * id
+   */
+  id?: number
+
+  /**
+   * 空间 id
+   */
+  spaceId?: number
+
+  /**
+   * 用户 id
+   */
+  userId?: number
+
+  /**
+   * 空间角色：viewer/editor/admin
+   */
+  spaceRole?: string
+
+  /**
+   * 创建时间
+   */
+  createTime?: string
+
+  /**
+   * 更新时间
+   */
+  updateTime?: string
+
+  /**
+   * 用户信息
+   */
+  user?: UserVO
+
+  /**
+   * 空间信息
+   */
+  space?: SpaceVO
+}
+
+/**
+ * 查询空间成员请求类
+ */
+export interface SpaceUserQueryRequest {
+  /**
+   * ID
+   */
+  id?: number
+
+  /**
+   * 空间 ID
+   */
+  spaceId?: number
+
+  /**
+   * 用户 ID
+   */
+  userId?: number
+
+  /**
+   * 空间角色：viewer/editor/admin
+   */
+  spaceRole?: string
+}
+
+/**
+ * 编辑空间成员请求类
+ */
+export interface SpaceUserEditRequest {
+  /**
+   * id
+   */
+  id?: number
+
+  /**
+   * 空间角色：viewer/editor/admin
+   */
+  spaceRole?: string
+}
+
+/**
+ * 添加空间成员请求类
+ */
+export interface SpaceUserAddRequest {
+  /**
+   * 空间 ID
+   */
+  spaceId?: number
+
+  /**
+   * 用户 ID
+   */
+  userId?: number
+
+  /**
+   * 空间角色：viewer/editor/admin
+   */
+  spaceRole?: string
 }
